@@ -1,0 +1,3088 @@
+<!DOCTYPE html>
+<html lang="bn" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>মেশিন লার্নিং হ্যান্ডবুক — সম্পূর্ণ প্রফেশনাল গাইড</title>
+<meta name="description" content="মেশিন লার্নিং প্রকল্পের সম্পূর্ণ গাইডলাইন: ডেটা এক্সপ্লোরেশন, ইম্পিউটেশন, এনকোডিং, ফিচার ইঞ্জিনিয়ারিং, মডেল টিউনিং, ডিপ লার্নিং এবং আরও অনেক কিছু।">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --bg:#F5F7F4;
+  --surface:#FFFFFF;
+  --surface-2:#EEF2ED;
+  --ink:#12201B;
+  --ink-soft:#4B5A54;
+  --ink-faint:#7C8B84;
+  --accent:#0E7C6B;
+  --accent-dark:#0A5C4F;
+  --accent-soft:#E1F3EE;
+  --violet:#6952C4;
+  --violet-soft:#EEEBFB;
+  --amber:#A9700F;
+  --amber-soft:#FBF1DD;
+  --rose:#B23A48;
+  --rose-soft:#FBEAEC;
+  --border:#DCE3DD;
+  --border-soft:#E9EEE7;
+  --code-bg:#0D1613;
+  --code-ink:#DCEAE3;
+  --code-border:#1E2E27;
+  --shadow:0 1px 2px rgba(18,32,27,.04), 0 8px 24px -12px rgba(18,32,27,.18);
+  --radius:14px;
+  --radius-sm:8px;
+  --font-body:'Hind Siliguri','Noto Sans Bengali','Nirmala UI','Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-display:'Hind Siliguri','Noto Sans Bengali','Nirmala UI','Segoe UI',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','Fira Code',ui-monospace,'SFMono-Regular',Consolas,'Liberation Mono',monospace;
+  --topbar-h:64px;
+  --sidebar-w:296px;
+  --maxw:880px;
+}
+html[data-theme="dark"]{
+  --bg:#0A0F0D;
+  --surface:#111814;
+  --surface-2:#161F1A;
+  --ink:#E7EFE9;
+  --ink-soft:#AEBDB5;
+  --ink-faint:#7C8B84;
+  --accent:#39C7A9;
+  --accent-dark:#2AA98E;
+  --accent-soft:#122A24;
+  --violet:#A995F0;
+  --violet-soft:#211C3B;
+  --amber:#E3B04B;
+  --amber-soft:#2E2611;
+  --rose:#E28792;
+  --rose-soft:#2E1519;
+  --border:#22302A;
+  --border-soft:#1A241E;
+  --code-bg:#080D0B;
+  --code-ink:#DCEAE3;
+  --code-border:#1E2E27;
+  --shadow:0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.5);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:.001ms !important; transition-duration:.001ms !important;} }
+body{
+  margin:0;background:var(--bg);color:var(--ink);
+  font-family:var(--font-body);
+  font-size:16.5px;line-height:1.75;
+  -webkit-font-smoothing:antialiased;
+  transition:background .25s ease,color .25s ease;
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;color:var(--ink);line-height:1.3;letter-spacing:-0.01em;}
+p{margin:0 0 1em;color:var(--ink-soft);}
+a{color:var(--accent-dark);}
+html[data-theme="dark"] a{color:var(--accent);}
+img{max-width:100%;display:block;}
+.skip-link{position:absolute;left:-999px;top:0;background:var(--accent);color:#fff;padding:10px 16px;z-index:9999;border-radius:0 0 8px 0;}
+.skip-link:focus{left:0;}
+
+/* ============ PROGRESS BAR ============ */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--violet));z-index:1000;width:0%;transition:width .1s linear;}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  position:sticky;top:0;z-index:900;height:var(--topbar-h);
+  background:color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;padding:0 18px;
+}
+.topbar .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-display);font-weight:800;font-size:17px;color:var(--ink);white-space:nowrap;text-decoration:none;}
+.topbar .brand .dot-logo{width:30px;height:30px;border-radius:9px;background:linear-gradient(135deg,var(--accent),var(--violet));display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;flex-shrink:0;}
+.hamburger{display:none;background:none;border:1px solid var(--border);color:var(--ink);width:38px;height:38px;border-radius:10px;align-items:center;justify-content:center;cursor:pointer;font-size:16px;}
+.search-wrap{flex:1;max-width:420px;position:relative;margin-inline-start:8px;}
+.search-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--ink-faint);font-size:14px;}
+#site-search{width:100%;padding:9px 14px 9px 36px;border-radius:999px;border:1px solid var(--border);background:var(--surface-2);color:var(--ink);font-family:var(--font-body);font-size:14.5px;outline:none;transition:box-shadow .2s,border-color .2s;}
+#site-search:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft);}
+#search-count{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11.5px;color:var(--ink-faint);background:var(--surface);padding:2px 7px;border-radius:999px;display:none;}
+.topbar-actions{display:flex;align-items:center;gap:6px;margin-inline-start:auto;}
+.icon-btn{background:none;border:1px solid var(--border);color:var(--ink-soft);width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:background .15s,color .15s,border-color .15s;}
+.icon-btn:hover{background:var(--accent-soft);color:var(--accent-dark);border-color:var(--accent);}
+.icon-btn.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* ============ LAYOUT ============ */
+.layout{display:flex;align-items:flex-start;max-width:1440px;margin:0 auto;}
+.sidebar{
+  width:var(--sidebar-w);flex-shrink:0;position:sticky;top:var(--topbar-h);
+  height:calc(100vh - var(--topbar-h));overflow-y:auto;padding:22px 14px 60px 22px;
+  border-right:1px solid var(--border);
+}
+.sidebar::-webkit-scrollbar{width:6px;}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:6px;}
+.sidebar .toc-title{font-size:11px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-faint);font-weight:700;margin:0 0 10px 4px;}
+.sidebar nav ul{list-style:none;margin:0 0 18px;padding:0;}
+.sidebar nav .toc-group-label{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--accent-dark);font-weight:700;margin:18px 0 6px 4px;}
+.sidebar nav .toc-group-label:first-child{margin-top:0;}
+.sidebar nav a{
+  display:block;padding:7px 10px;border-radius:8px;color:var(--ink-soft);text-decoration:none;font-size:14.3px;
+  border-left:2px solid transparent;transition:background .15s,color .15s;
+}
+.sidebar nav a:hover{background:var(--surface-2);color:var(--ink);}
+.sidebar nav a.active{background:var(--accent-soft);color:var(--accent-dark);font-weight:600;border-left-color:var(--accent);}
+main{flex:1;min-width:0;}
+.content-inner{max-width:var(--maxw);margin:0 auto;padding:0 28px 100px;}
+
+@media (max-width:980px){
+  .sidebar{position:fixed;left:0;top:var(--topbar-h);z-index:850;background:var(--surface);width:82%;max-width:320px;
+    transform:translateX(-105%);transition:transform .25s ease;box-shadow:var(--shadow);border-right:none;}
+  .sidebar.open{transform:translateX(0);}
+  .hamburger{display:flex;}
+  .search-wrap{max-width:none;}
+  .topbar .brand span.brand-text{display:none;}
+  #sidebar-backdrop{display:none;position:fixed;inset:0;top:var(--topbar-h);background:rgba(0,0,0,.35);z-index:840;}
+  #sidebar-backdrop.show{display:block;}
+}
+
+/* ============ COVER / HERO ============ */
+.cover{
+  position:relative;padding:78px 28px 64px;text-align:center;overflow:hidden;
+  border-bottom:1px solid var(--border);
+  background:
+    radial-gradient(circle at 15% 20%, var(--accent-soft), transparent 45%),
+    radial-gradient(circle at 85% 15%, var(--violet-soft), transparent 40%);
+}
+.cover .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-dark);background:var(--accent-soft);padding:6px 14px;border-radius:999px;margin-bottom:22px;}
+.cover h1{font-size:clamp(30px,5vw,50px);margin:0 0 16px;max-width:820px;margin-inline:auto;}
+.cover h1 .accent-word{color:var(--accent-dark);}
+html[data-theme=dark] .cover h1 .accent-word{color:var(--accent);}
+.cover .subtitle{font-size:18px;color:var(--ink-soft);max-width:640px;margin:0 auto 34px;}
+.cover .cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:56px;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:11px;font-weight:700;font-size:15px;text-decoration:none;cursor:pointer;border:1px solid transparent;font-family:var(--font-body);}
+.btn-primary{background:var(--ink);color:var(--bg);}
+html[data-theme=dark] .btn-primary{background:var(--accent);color:#04140F;}
+.btn-ghost{background:var(--surface);color:var(--ink);border-color:var(--border);}
+.btn-ghost:hover{border-color:var(--accent);color:var(--accent-dark);}
+
+/* pipeline rail — signature element */
+.pipeline-rail{display:flex;gap:0;max-width:1180px;margin:0 auto;overflow-x:auto;padding:8px 4px 18px;}
+.pipeline-rail::-webkit-scrollbar{height:6px;}
+.rail-step{flex:1;min-width:118px;position:relative;padding:0 6px;text-align:center;}
+.rail-step .num{width:40px;height:40px;border-radius:50%;background:var(--surface);border:2px solid var(--accent);color:var(--accent-dark);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:var(--font-mono);font-size:14px;margin:0 auto 10px;position:relative;z-index:2;}
+html[data-theme=dark] .rail-step .num{color:var(--accent);}
+.rail-step::before{content:"";position:absolute;top:20px;left:-50%;width:100%;height:2px;background:linear-gradient(90deg,var(--border),var(--accent),var(--border));z-index:1;}
+.rail-step:first-child::before{display:none;}
+.rail-step .lbl{font-size:12.5px;font-weight:700;color:var(--ink);}
+.rail-step .sub{font-size:11px;color:var(--ink-faint);}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:0;max-width:760px;margin:44px auto 0;border-top:1px solid var(--border);}
+.stat-grid .stat{padding:18px 8px;border-right:1px solid var(--border);}
+.stat-grid .stat:last-child{border-right:none;}
+.stat-grid .stat b{display:block;font-size:26px;font-family:var(--font-mono);color:var(--accent-dark);}
+html[data-theme=dark] .stat-grid .stat b{color:var(--accent);}
+.stat-grid .stat span{font-size:12px;color:var(--ink-faint);}
+
+/* ============ CONTENT BLOCKS ============ */
+.chapter{padding-top:64px;margin-top:-24px;scroll-margin-top:80px;border-top:1px solid var(--border-soft);}
+.chapter:first-of-type{border-top:none;}
+.chapter-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:8px;}
+.chapter-head .chno{font-family:var(--font-mono);font-weight:800;font-size:15px;color:var(--accent-dark);background:var(--accent-soft);border:1px solid var(--border);width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+html[data-theme=dark] .chapter-head .chno{color:var(--accent);}
+.chapter-head h2{font-size:28px;margin:6px 0 0;}
+.chapter .lede{font-size:16.5px;color:var(--ink-soft);margin:14px 0 30px;padding-left:62px;}
+.chapter .lede:empty{display:none;}
+h3.sub{font-size:20px;margin:38px 0 12px;padding-bottom:8px;border-bottom:1px solid var(--border-soft);scroll-margin-top:80px;}
+h4.subsub{font-size:16px;margin:24px 0 10px;color:var(--accent-dark);}
+html[data-theme=dark] h4.subsub{color:var(--accent);}
+.block{margin-bottom:22px;scroll-margin-top:80px;}
+.searchable-hide{display:none !important;}
+
+/* ============ CALLOUTS ============ */
+.callout{display:flex;gap:12px;padding:16px 18px;border-radius:var(--radius-sm);margin:20px 0;border:1px solid;font-size:15px;}
+.callout i.callout-ic{font-size:16px;margin-top:2px;flex-shrink:0;}
+.callout .callout-title{font-weight:700;display:block;margin-bottom:3px;font-family:var(--font-display);}
+.callout p:last-child{margin-bottom:0;}
+.callout-note{background:var(--accent-soft);border-color:color-mix(in srgb, var(--accent) 35%, var(--border));color:var(--ink);}
+.callout-note i{color:var(--accent-dark);}
+.callout-tip{background:var(--violet-soft);border-color:color-mix(in srgb, var(--violet) 35%, var(--border));color:var(--ink);}
+.callout-tip i{color:var(--violet);}
+.callout-warning{background:var(--amber-soft);border-color:color-mix(in srgb, var(--amber) 40%, var(--border));color:var(--ink);}
+.callout-warning i{color:var(--amber);}
+.callout-danger{background:var(--rose-soft);border-color:color-mix(in srgb, var(--rose) 35%, var(--border));color:var(--ink);}
+.callout-danger i{color:var(--rose);}
+
+/* ============ CODE ============ */
+.code-card{background:var(--code-bg);border:1px solid var(--code-border);border-radius:var(--radius-sm);margin:18px 0;overflow:hidden;box-shadow:var(--shadow);}
+.code-card .code-head{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:color-mix(in srgb, var(--code-bg) 80%, #fff 4%);border-bottom:1px solid var(--code-border);}
+.code-card .code-lang{font-family:var(--font-mono);font-size:11.5px;color:#8FA69C;text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;gap:7px;}
+.code-card .code-lang .lang-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);}
+.copy-btn{background:transparent;border:1px solid var(--code-border);color:#9FB3AA;font-size:11.5px;padding:5px 10px;border-radius:7px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:var(--font-body);}
+.copy-btn:hover{background:rgba(255,255,255,.06);color:#fff;}
+.copy-btn.copied{color:var(--accent);border-color:var(--accent);}
+.code-card pre{margin:0;padding:16px 18px;overflow-x:auto;}
+.code-card pre::-webkit-scrollbar{height:7px;}
+.code-card pre::-webkit-scrollbar-thumb{background:#26382F;border-radius:6px;}
+.code-card code{font-family:var(--font-mono);font-size:13.4px;line-height:1.65;color:var(--code-ink);white-space:pre;}
+.tok-kw{color:#5FC9E8;} .tok-str{color:#C6E07A;} .tok-com{color:#6D8378;font-style:italic;} .tok-num{color:#F0B45E;} .tok-fn{color:#E6A6F0;} .tok-dec{color:#F0B45E;}
+code.inline{font-family:var(--font-mono);background:var(--surface-2);border:1px solid var(--border);padding:1.5px 6px;border-radius:5px;font-size:.87em;color:var(--accent-dark);}
+html[data-theme=dark] code.inline{color:var(--accent);}
+
+/* ============ TABLES ============ */
+.table-wrap{overflow-x:auto;margin:20px 0;border:1px solid var(--border);border-radius:var(--radius-sm);box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;font-size:14.3px;background:var(--surface);min-width:520px;}
+thead th{position:sticky;top:0;background:var(--ink);color:var(--bg);text-align:left;padding:11px 14px;font-weight:700;font-size:13px;white-space:nowrap;}
+html[data-theme=dark] thead th{background:var(--surface-2);color:var(--accent);}
+tbody td{padding:11px 14px;border-top:1px solid var(--border-soft);color:var(--ink-soft);vertical-align:top;}
+tbody tr:nth-child(even){background:var(--surface-2);}
+tbody td strong,tbody td b{color:var(--ink);}
+
+/* ============ CARDS / GRIDS ============ */
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:22px 0;}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;box-shadow:var(--shadow);}
+.card h4{margin:0 0 8px;font-size:15.5px;display:flex;align-items:center;gap:8px;}
+.card h4 i{color:var(--accent-dark);}
+html[data-theme=dark] .card h4 i{color:var(--accent);}
+.card p{font-size:13.8px;margin-bottom:0;}
+.card .tag{display:inline-block;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:var(--accent-soft);color:var(--accent-dark);padding:2px 9px;border-radius:999px;margin-bottom:9px;}
+html[data-theme=dark] .card .tag{color:var(--accent);}
+
+/* ============ ACCORDION ============ */
+details.accordion{border:1px solid var(--border);border-radius:var(--radius-sm);margin:14px 0;background:var(--surface);overflow:hidden;}
+details.accordion summary{list-style:none;cursor:pointer;padding:14px 18px;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);}
+details.accordion summary::-webkit-details-marker{display:none;}
+details.accordion summary .chev{transition:transform .2s;color:var(--ink-faint);}
+details.accordion[open] summary .chev{transform:rotate(180deg);}
+details.accordion .acc-body{padding:16px 18px 4px;}
+details.accordion summary:focus-visible, a:focus-visible, button:focus-visible, input:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+
+/* ============ FLOW / DIAGRAM (workflow) ============ */
+.flow-vert{border-left:2px dashed var(--border);margin:26px 0 26px 21px;padding-left:30px;}
+.flow-step{position:relative;padding-bottom:26px;}
+.flow-step:last-child{padding-bottom:0;}
+.flow-step::before{content:attr(data-i);position:absolute;left:-42px;top:0;width:32px;height:32px;background:var(--accent);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-weight:800;font-size:13px;box-shadow:0 0 0 5px var(--bg);}
+.flow-step .ft{font-weight:700;font-size:15.5px;margin-bottom:4px;}
+.flow-step ul{margin:6px 0 0;padding-left:20px;color:var(--ink-soft);font-size:14.3px;}
+.flow-step ul li{margin-bottom:3px;}
+
+/* comparison badges */
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;}
+.badge-good{background:var(--accent-soft);color:var(--accent-dark);}
+html[data-theme=dark] .badge-good{color:var(--accent);}
+.badge-bad{background:var(--rose-soft);color:var(--rose);}
+.badge-neutral{background:var(--surface-2);color:var(--ink-soft);border:1px solid var(--border);}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid var(--border-soft);padding:16px 0;}
+.faq-item summary{cursor:pointer;font-weight:700;font-size:15.5px;list-style:none;display:flex;justify-content:space-between;gap:10px;color:var(--ink);}
+.faq-item summary::-webkit-details-marker{display:none;}
+.faq-item summary i{color:var(--ink-faint);transition:transform .2s;flex-shrink:0;margin-top:3px;}
+.faq-item[open] summary i{transform:rotate(45deg);}
+.faq-item p{margin-top:10px;font-size:14.8px;}
+
+/* back to top / print / footer */
+#back-to-top{position:fixed;bottom:26px;right:26px;width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--bg);border:none;display:none;align-items:center;justify-content:center;font-size:17px;cursor:pointer;box-shadow:var(--shadow);z-index:500;}
+html[data-theme=dark] #back-to-top{background:var(--accent);color:#04140F;}
+#back-to-top.show{display:flex;}
+footer.site-footer{border-top:1px solid var(--border);padding:44px 28px 60px;text-align:center;color:var(--ink-faint);font-size:13.5px;}
+footer.site-footer .fbrand{font-weight:800;color:var(--ink);font-family:var(--font-display);margin-bottom:6px;}
+.toc-inline{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 20px;margin:18px 0 30px;}
+.toc-inline .toc-title{font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);margin-bottom:10px;}
+.toc-inline ul{margin:0;padding-left:20px;columns:2;font-size:13.8px;color:var(--ink-soft);}
+.toc-inline li{margin-bottom:5px;break-inside:avoid;}
+.toc-inline a{color:var(--ink-soft);text-decoration:none;}
+.toc-inline a:hover{color:var(--accent-dark);text-decoration:underline;}
+
+/* print */
+@media print{
+  .topbar,.sidebar,#back-to-top,#progress-bar,#sidebar-backdrop,.no-print{display:none !important;}
+  main{width:100%;}
+  .content-inner{max-width:100%;padding:0;}
+  body{background:#fff;color:#000;font-size:11.5pt;}
+  .code-card{break-inside:avoid;border:1px solid #999;}
+  .chapter{break-before:page;}
+  a{color:#000;text-decoration:underline;}
+}
+::selection{background:var(--accent);color:#fff;}
+.hidden-anchor{position:relative;top:-80px;visibility:hidden;height:0;}
+</style>
+</head>
+<body>
+<a href="#main-content" class="skip-link">মূল কন্টেন্টে যান</a>
+<div id="progress-bar" role="progressbar" aria-hidden="true"></div>
+
+<header class="topbar" role="banner">
+  <button class="hamburger" id="hamburger-btn" aria-label="মেনু খুলুন" aria-expanded="false" aria-controls="sidebar">
+    <i class="fa-solid fa-bars"></i>
+  </button>
+  <a href="#top" class="brand">
+    <span class="dot-logo"><i class="fa-solid fa-diagram-project"></i></span>
+    <span class="brand-text">ML হ্যান্ডবুক</span>
+  </a>
+  <div class="search-wrap">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" id="site-search" placeholder="ডকুমেন্টেশনে খুঁজুন… (যেমন: SMOTE, TF-IDF, GridSearchCV)" aria-label="ডকুমেন্টেশন সার্চ">
+    <span id="search-count"></span>
+  </div>
+  <div class="topbar-actions">
+    <button class="icon-btn no-print" id="expand-all-btn" title="সব সেকশন খুলুন/বন্ধ করুন" aria-label="সব সেকশন খুলুন বা বন্ধ করুন"><i class="fa-solid fa-arrows-up-down"></i></button>
+    <button class="icon-btn no-print" id="print-btn" title="প্রিন্ট করুন" aria-label="ডকুমেন্ট প্রিন্ট করুন"><i class="fa-solid fa-print"></i></button>
+    <button class="icon-btn no-print" id="theme-toggle" title="ডার্ক/লাইট মোড" aria-label="থিম পরিবর্তন করুন"><i class="fa-solid fa-moon"></i></button>
+  </div>
+</header>
+
+<div id="sidebar-backdrop" class="no-print"></div>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar" aria-label="সূচিপত্র নেভিগেশন">
+    <p class="toc-title">সম্পূর্ণ সূচিপত্র</p>
+    <nav>
+      <ul>
+        <li><a href="#top">হোম / কভার</a></li>
+        <li><a href="#exec-summary">এক্সিকিউটিভ সামারি</a></li>
+        <li><a href="#introduction">ভূমিকা</a></li>
+      </ul>
+
+      <p class="toc-group-label">পর্ব ১ · ভিত্তি</p>
+      <ul>
+        <li><a href="#ch-env">১. এনভায়রনমেন্ট সেটআপ (Conda)</a></li>
+        <li><a href="#ch-python">২. পাইথন ফান্ডামেন্টালস</a></li>
+      </ul>
+
+      <p class="toc-group-label">পর্ব ২ · ডেটা প্রস্তুতি</p>
+      <ul>
+        <li><a href="#ch-eda">৩. ডেটা এক্সপ্লোরেশন ও EDA</a></li>
+        <li><a href="#ch-impute">৪. মিসিং ভ্যালু ইম্পিউটেশন</a></li>
+        <li><a href="#ch-outlier">৫. আউটলাইয়ার হ্যান্ডলিং</a></li>
+        <li><a href="#ch-encoding">৬. ক্যাটেগরিক্যাল এনকোডিং</a></li>
+        <li><a href="#ch-feature">৭. ফিচার ইঞ্জিনিয়ারিং ও স্কেলিং</a></li>
+        <li><a href="#ch-vectorization">৮. টেক্সট ভেক্টরাইজেশন (NLP)</a></li>
+      </ul>
+
+      <p class="toc-group-label">পর্ব ৩ · মডেলিং</p>
+      <ul>
+        <li><a href="#ch-split">৯. ট্রেন-টেস্ট স্প্লিট স্ট্র্যাটেজি</a></li>
+        <li><a href="#ch-pipeline">১০. পাইপলাইন ও হাইপারপ্যারামিটার টিউনিং</a></li>
+        <li><a href="#ch-eval">১১. মডেল ইভালুয়েশন ও ক্রস-ভ্যালিডেশন</a></li>
+        <li><a href="#ch-interpret">১২. মডেল ইন্টারপ্রিটেশন (SHAP/LIME)</a></li>
+        <li><a href="#ch-imbalance">১৩. ইমব্যালেন্সড ডেটা হ্যান্ডলিং</a></li>
+        <li><a href="#ch-persist">১৪. মডেল সেভ ও লোড</a></li>
+        <li><a href="#ch-e2e">১৫. এন্ড-টু-এন্ড রিগ্রেশন প্রজেক্ট</a></li>
+        <li><a href="#ch-drift">১৬. ডেটা ড্রিফট ডিটেকশন</a></li>
+      </ul>
+
+      <p class="toc-group-label">পর্ব ৪ · ডিপ লার্নিং</p>
+      <ul>
+        <li><a href="#ch-dl">১৭. TensorFlow ও Keras হ্যান্ডবুক</a></li>
+      </ul>
+
+      <p class="toc-group-label">পর্ব ৫ · রেফারেন্স</p>
+      <ul>
+        <li><a href="#ch-utils">১৮. কুয়েরি ইঞ্জিন ও ইউটিলিটি ফাংশন</a></li>
+        <li><a href="#ch-tips">১৯. টিপস ও ট্রিকস চিটশিট</a></li>
+      </ul>
+
+      <p class="toc-group-label">পরিশিষ্ট</p>
+      <ul>
+        <li><a href="#faq">প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ)</a></li>
+        <li><a href="#best-practices">বেস্ট প্র্যাকটিস</a></li>
+        <li><a href="#mistakes">সাধারণ ভুল</a></li>
+        <li><a href="#troubleshooting">ট্রাবলশুটিং গাইড</a></li>
+        <li><a href="#conclusion">উপসংহার</a></li>
+        <li><a href="#references">রেফারেন্স</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main id="main-content">
+    <div class="content-inner" style="max-width:100%;padding:0;">
+<section class="cover" id="top">
+  <span class="eyebrow"><i class="fa-solid fa-sparkles"></i> কনসোলিডেটেড ডকুমেন্টেশন · v1.0</span>
+  <h1>মেশিন লার্নিং <span class="accent-word">সম্পূর্ণ হ্যান্ডবুক</span> — ডেটা থেকে ডিপ্লয়মেন্ট</h1>
+  <p class="subtitle">চারটি পৃথক নোট একত্র করে তৈরি একটি একক, প্রফেশনাল রেফারেন্স — এনভায়রনমেন্ট সেটআপ, ডেটা প্রি-প্রসেসিং, ফিচার ইঞ্জিনিয়ারিং, ক্লাসিক্যাল ML, NLP ভেক্টরাইজেশন এবং TensorFlow/Keras ডিপ লার্নিং পর্যন্ত — কোড, তুলনামূলক টেবিল ও বেস্ট প্র্যাকটিসসহ।</p>
+  <div class="cta-row">
+    <a href="#ch-env" class="btn btn-primary"><i class="fa-solid fa-play"></i> পড়া শুরু করুন</a>
+    <a href="#exec-summary" class="btn btn-ghost"><i class="fa-solid fa-list-check"></i> এক্সিকিউটিভ সামারি দেখুন</a>
+  </div>
+
+  <div class="pipeline-rail" aria-label="মেশিন লার্নিং প্রকল্পের সম্পূর্ণ প্রবাহ">
+    <div class="rail-step"><div class="num">১</div><div class="lbl">সমস্যা নির্ধারণ</div><div class="sub">Objectives</div></div>
+    <div class="rail-step"><div class="num">২</div><div class="lbl">ডেটা সংগ্রহ</div><div class="sub">Collection</div></div>
+    <div class="rail-step"><div class="num">৩</div><div class="lbl">এক্সপ্লোরেশন</div><div class="sub">EDA</div></div>
+    <div class="rail-step"><div class="num">৪</div><div class="lbl">প্রি-প্রসেসিং</div><div class="sub">Clean · Encode · Scale</div></div>
+    <div class="rail-step"><div class="num">৫</div><div class="lbl">মডেল ডেভেলপমেন্ট</div><div class="sub">Train · Tune</div></div>
+    <div class="rail-step"><div class="num">৬</div><div class="lbl">ইভালুয়েশন</div><div class="sub">Metrics · CV</div></div>
+    <div class="rail-step"><div class="num">৭</div><div class="lbl">ব্যাখ্যাযোগ্যতা</div><div class="sub">SHAP · LIME</div></div>
+    <div class="rail-step"><div class="num">৮</div><div class="lbl">ডিপ্লয়মেন্ট</div><div class="sub">Serve · Monitor</div></div>
+    <div class="rail-step"><div class="num">৯</div><div class="lbl">রক্ষণাবেক্ষণ</div><div class="sub">Drift · Retrain</div></div>
+  </div>
+
+  <div class="stat-grid">
+    <div class="stat"><b>১৯</b><span>অধ্যায়</span></div>
+    <div class="stat"><b>৪</b><span>উৎস ডকুমেন্ট</span></div>
+    <div class="stat"><b>৫০+</b><span>কোড উদাহরণ</span></div>
+    <div class="stat"><b>১২</b><span>তুলনামূলক টেবিল</span></div>
+    <div class="stat"><b>১</b><span>সিঙ্গেল HTML ফাইল</span></div>
+  </div>
+</section>
+
+<div class="content-inner">
+
+<section class="block" id="exec-summary">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-star"></i></span><h2>এক্সিকিউটিভ সামারি</h2></div>
+  <div class="lede">
+  <p>এই ডকুমেন্টটি চারটি পৃথক নোট — <strong>Handbook_ML</strong> (ট্যাবুলার ML + TensorFlow/Keras গাইড), <strong>ML_Function</strong> (রি-ইউজেবল পাইথন ফাংশন লাইব্রেরি), <strong>Data Representation &amp; Vectorization</strong> (NLP টেক্সট ভেক্টরাইজেশন) এবং <strong>Conda এনভায়রনমেন্ট গাইড</strong> — বিশ্লেষণ করে একত্রিত (accumulate) করা হয়েছে। ডুপ্লিকেট ফাংশন ও ব্যাখ্যা একীভূত করে সর্বোত্তম সংস্করণ রাখা হয়েছে, এবং প্রয়োজনীয় স্থানে অতিরিক্ত ব্যাখ্যা, টিপস, সতর্কতা ও বেস্ট প্র্যাকটিস যুক্ত করা হয়েছে।</p>
+  <div class="grid-cards">
+    <div class="card"><span class="tag">কী পাবেন</span><h4><i class="fa-solid fa-layer-group"></i> সম্পূর্ণ ওয়ার্কফ্লো</h4><p>সমস্যা নির্ধারণ থেকে ডিপ্লয়মেন্ট-পরবর্তী মনিটরিং পর্যন্ত প্রতিটি ধাপের বিস্তারিত ব্যাখ্যা ও কোড।</p></div>
+    <div class="card"><span class="tag">কী পাবেন</span><h4><i class="fa-solid fa-broom"></i> ডেটা প্রি-প্রসেসিং</h4><p>মিসিং ভ্যালু, আউটলাইয়ার, এনকোডিং, স্কেলিং ও ফিচার ইঞ্জিনিয়ারিংয়ের প্রতিটি পদ্ধতি — তুলনাসহ।</p></div>
+    <div class="card"><span class="tag">কী পাবেন</span><h4><i class="fa-solid fa-robot"></i> মডেলিং ও টিউনিং</h4><p>Pipeline, GridSearchCV, RandomizedSearchCV, Optuna, SHAP/LIME ইন্টারপ্রিটেশন।</p></div>
+    <div class="card"><span class="tag">কী পাবেন</span><h4><i class="fa-solid fa-brain"></i> ডিপ লার্নিং</h4><p>TensorFlow/Keras দিয়ে CNN, ট্রান্সফার লার্নিং, টেক্সট মডেল ও ডিস্ট্রিবিউটেড ট্রেনিং।</p></div>
+  </div>
+  <div class="callout callout-note">
+    <i class="fa-solid fa-circle-info callout-ic"></i>
+    <div><span class="callout-title">কীভাবে ব্যবহার করবেন</span><p>বাম পাশের সূচিপত্র থেকে যেকোনো অধ্যায়ে সরাসরি যান, উপরের সার্চ বক্সে ফাংশন/কনসেপ্টের নাম লিখে খুঁজুন, অথবা প্রতিটি কোড কার্ডের <em>Copy</em> বাটনে ক্লিক করে কোড কপি করুন। ডার্ক মোড ও প্রিন্ট-ফ্রেন্ডলি লেআউট উভয়ই সমর্থিত।</p></div>
+  </div>
+  </div>
+</section>
+
+<section class="block" id="introduction">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-book-open"></i></span><h2>ভূমিকা</h2></div>
+  <div class="lede">
+  <p>মেশিন লার্নিং প্রকল্প শুধু একটি মডেল ট্রেন করা নয় — এটি একটি চক্রাকার (cyclical) প্রক্রিয়া যেখানে ব্যবসায়িক সমস্যা বোঝা, ডেটা সংগ্রহ, পরিষ্কারকরণ, ফিচার তৈরি, মডেল প্রশিক্ষণ, মূল্যায়ন, ডিপ্লয়মেন্ট এবং ক্রমাগত পর্যবেক্ষণ জড়িত। নিচের ইন্টারঅ্যাকটিভ প্রবাহচিত্র (উপরে) পুরো জীবনচক্রটি দেখায়। এই হ্যান্ডবুকে প্রতিটি ধাপের জন্য ব্যবহারিক (practical), কপি-পেস্ট-রেডি কোড দেওয়া হয়েছে যা সরাসরি বাস্তব প্রকল্পে প্রয়োগ করা যায়।</p>
+  <p>ডকুমেন্টটি দুই ধরনের ডেটার কথা মাথায় রেখে সাজানো হয়েছে: <strong>ট্যাবুলার/স্ট্রাকচার্ড ডেটা</strong> (যেমন হাউজিং প্রাইস, কাস্টমার ডেটা) এবং <strong>টেক্সট/আনস্ট্রাকচার্ড ডেটা</strong> (NLP)। প্রতিটি অংশে "কখন ব্যবহার করবেন", "সুবিধা-অসুবিধা" এবং "সতর্কতা" আলাদাভাবে উল্লেখ করা হয়েছে যাতে সঠিক পদ্ধতি বেছে নেওয়া সহজ হয়।</p>
+  </div>
+  <div class="toc-inline" aria-label="অধ্যায় সারাংশ">
+    <div class="toc-title">এই ডকুমেন্টে যা আছে</div>
+    <ul>
+      <li><a href="#ch-env">এনভায়রনমেন্ট সেটআপ</a></li>
+      <li><a href="#ch-python">পাইথন ফান্ডামেন্টালস</a></li>
+      <li><a href="#ch-eda">ডেটা এক্সপ্লোরেশন</a></li>
+      <li><a href="#ch-impute">মিসিং ভ্যালু ইম্পিউটেশন</a></li>
+      <li><a href="#ch-outlier">আউটলাইয়ার হ্যান্ডলিং</a></li>
+      <li><a href="#ch-encoding">ক্যাটেগরিক্যাল এনকোডিং</a></li>
+      <li><a href="#ch-feature">ফিচার ইঞ্জিনিয়ারিং</a></li>
+      <li><a href="#ch-vectorization">টেক্সট ভেক্টরাইজেশন</a></li>
+      <li><a href="#ch-split">ট্রেন-টেস্ট স্প্লিট</a></li>
+      <li><a href="#ch-pipeline">পাইপলাইন ও টিউনিং</a></li>
+      <li><a href="#ch-eval">ইভালুয়েশন</a></li>
+      <li><a href="#ch-interpret">ইন্টারপ্রিটেশন</a></li>
+      <li><a href="#ch-imbalance">ইমব্যালেন্সড ডেটা</a></li>
+      <li><a href="#ch-persist">মডেল সেভ/লোড</a></li>
+      <li><a href="#ch-e2e">এন্ড-টু-এন্ড প্রজেক্ট</a></li>
+      <li><a href="#ch-drift">ডেটা ড্রিফট</a></li>
+      <li><a href="#ch-dl">TensorFlow/Keras</a></li>
+      <li><a href="#ch-utils">ইউটিলিটি ফাংশন</a></li>
+      <li><a href="#ch-tips">টিপস ও ট্রিকস</a></li>
+    </ul>
+  </div>
+</section>
+<section class="chapter" id="ch-env">
+  <div class="chapter-head"><span class="chno">০১</span><h2>এনভায়রনমেন্ট সেটআপ (Conda)</h2></div>
+  <div class="lede">যেকোনো ML প্রকল্প শুরুর আগে একটি আইসোলেটেড (isolated) Python এনভায়রনমেন্ট তৈরি করা অত্যন্ত গুরুত্বপূর্ণ, যাতে বিভিন্ন প্রকল্পের লাইব্রেরি ভার্সন একে অপরের সাথে সংঘর্ষ (conflict) না করে। এই অধ্যায়ে Conda দিয়ে এনভায়রনমেন্ট তৈরি, সক্রিয়করণ, এক্সপোর্ট ও ম্যানেজমেন্টের সম্পূর্ণ কমান্ড রেফারেন্স দেওয়া হলো।</div>
+
+  <div class="block">
+    <h3 class="sub">এনভায়রনমেন্ট তালিকা দেখা</h3>
+    <p>বর্তমানে সিস্টেমে থাকা সব Conda এনভায়রনমেন্ট দেখতে VS Code টার্মিনাল বা যেকোনো টার্মিনালে নিচের যেকোনো একটি কমান্ড চালান:</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>bash</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-bash">conda env list
+# অথবা
+conda info --envs</code></pre></div>
+    <p>আউটপুট এমন দেখাবে (<code class="inline">*</code> চিহ্নটি বর্তমান সক্রিয় এনভায়রনমেন্ট নির্দেশ করে):</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>output</span></div><pre><code class="language-bash"># conda environments:
+base                  *  /home/user/miniconda3
+ml-env                   /home/user/miniconda3/envs/ml-env
+data-project             /home/user/miniconda3/envs/data-project</code></pre></div>
+    <div class="callout callout-note">
+      <i class="fa-solid fa-circle-info callout-ic"></i>
+      <div><span class="callout-title">Conda ছাড়া venv/virtualenv ব্যবহার করলে</span><p>যদি Conda এর পরিবর্তে <code class="inline">venv</code> বা <code class="inline">virtualenv</code> ব্যবহার করেন, তাহলে এনভায়রনমেন্ট তালিকা ম্যানুয়ালি ফোল্ডার থেকে দেখতে হবে — Linux/macOS: <code class="inline">ls ~/.virtualenvs</code>, Windows: <code class="inline">dir %USERPROFILE%\.virtualenvs</code>।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">নতুন এনভায়রনমেন্ট তৈরি ও সক্রিয়করণ</h3>
+    <h4 class="subsub">পদ্ধতি ১ — নাম দিয়ে তৈরি (ডিফল্ট লোকেশনে)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>bash</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-bash">conda create --name myenv python=3.10
+conda activate myenv</code></pre></div>
+    <p><code class="inline">myenv</code> নিজের পছন্দমতো নামে এবং <code class="inline">3.10</code> প্রয়োজনীয় Python ভার্সনে পরিবর্তন করুন। এভাবে তৈরি করা এনভায়রনমেন্ট Conda-র ডিফল্ট <code class="inline">envs</code> ফোল্ডারে জমা হয়।</p>
+
+    <h4 class="subsub">পদ্ধতি ২ — কাস্টম পাথে তৈরি (<code class="inline">--prefix</code> / <code class="inline">-p</code>)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>bash</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-bash"># বর্তমান ফোল্ডারে তৈরি
+conda create -p ./myenv python=3.10
+
+# নির্দিষ্ট পূর্ণ পাথে তৈরি
+conda create -p /home/user/envs/myenv python=3.10
+
+# সক্রিয় করা
+conda activate /home/user/envs/myenv</code></pre></div>
+    <p>প্রজেক্ট-স্পেসিফিক এনভায়রনমেন্টের জন্য এই পদ্ধতি সুবিধাজনক, কারণ এনভায়রনমেন্ট প্রকল্প ফোল্ডারের ভেতরেই থাকে।</p>
+
+    <h4 class="subsub">সম্পূর্ণ ওয়ার্কফ্লো উদাহরণ</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>bash</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-bash"># ধাপ ১: টার্মিনাল খুলুন এবং প্রকল্প ফোল্ডারে যান
+cd "F:\Projects\DSE\bolt\project"
+
+# ধাপ ২: dseproject নামে এনভায়রনমেন্ট তৈরি করুন
+conda create -n dseproject python=3.10 -y
+
+# ধাপ ৩: এনভায়রনমেন্ট সক্রিয় করুন
+conda activate dseproject</code></pre></div>
+    <div class="callout callout-warning">
+      <i class="fa-solid fa-triangle-exclamation callout-ic"></i>
+      <div><span class="callout-title">লোকেশন সম্পর্কে সতর্কতা</span><p><code class="inline">-n</code> দিয়ে তৈরি করা এনভায়রনমেন্ট সবসময় Conda-র রুট ফোল্ডারে (যেমন <code class="inline">C:\Users\...\anaconda3\envs\dseproject</code>) সংরক্ষিত হয় — এমনকি আপনি অন্য ড্রাইভ/ফোল্ডারে কাজ করলেও। প্রকল্প ফোল্ডারের ভেতরেই এনভায়রনমেন্ট রাখতে <code class="inline">-p</code> ফ্ল্যাগ ব্যবহার করুন।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">নাম বনাম পাথ — কখন কোনটি ব্যবহার করবেন</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>কমান্ড</th><th>এনভায়রনমেন্ট সংরক্ষণের স্থান</th><th>সক্রিয়করণ কমান্ড</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">--name myenv</code></td><td>Conda রুট ফোল্ডারের ভেতরে</td><td><code class="inline">conda activate myenv</code></td></tr>
+        <tr><td><code class="inline">-p /path/to/myenv</code></td><td>নির্দিষ্ট কাস্টম পাথে</td><td><code class="inline">conda activate /path/to/myenv</code></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">সম্পূর্ণ Conda কমান্ড চিটশিট</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>কাজ</th><th>কমান্ড</th><th>মন্তব্য</th></tr></thead>
+      <tbody>
+        <tr><td>নামসহ এনভায়রনমেন্ট তৈরি</td><td><code class="inline">conda create -n env_name python=3.9</code></td><td>ডিফল্ট <code class="inline">envs</code> ফোল্ডারে তৈরি হয়</td></tr>
+        <tr><td>পূর্ণ পাথসহ তৈরি</td><td><code class="inline">conda create -p "F:\path\to\env_name" python=3.9</code></td><td>নির্দিষ্ট (প্রজেক্ট) ফোল্ডারে তৈরি হয়</td></tr>
+        <tr><td>সক্রিয়করণ (নাম)</td><td><code class="inline">conda activate env_name</code></td><td>প্রম্পটের শুরুতে <code class="inline">(env_name)</code> দেখাবে</td></tr>
+        <tr><td>সক্রিয়করণ (পাথ)</td><td><code class="inline">conda activate ./env_name</code></td><td>বর্তমান ডিরেক্টরিতে থাকলে <code class="inline">./</code> ব্যবহার করুন</td></tr>
+        <tr><td>নিষ্ক্রিয়করণ</td><td><code class="inline">conda deactivate</code></td><td>এনভায়রনমেন্ট থেকে বের হয়ে <code class="inline">base</code>-এ ফিরে যাবে</td></tr>
+        <tr><td>তালিকা দেখা</td><td><code class="inline">conda env list</code></td><td>সব এনভায়রনমেন্টের নাম ও পাথ দেখাবে</td></tr>
+        <tr><td>ডিলিট (নাম)</td><td><code class="inline">conda env remove -n env_name</code></td><td>নাম উল্লেখ করে ডিলিট</td></tr>
+        <tr><td>ডিলিট (পাথ)</td><td><code class="inline">conda env remove -p "F:\full\path\to\env"</code></td><td>পূর্ণ পাথ উল্লেখ করে ডিলিট</td></tr>
+        <tr><td>বর্তমান এনভায়রনমেন্ট চেক</td><td><code class="inline">conda info --envs</code></td><td>অ্যাক্টিভ এনভায়রনমেন্টের পাশে <code class="inline">*</code> চিহ্ন থাকবে</td></tr>
+        <tr><td>প্যাকেজ ইনস্টল</td><td><code class="inline">conda install package_name</code> / <code class="inline">pip install package_name</code></td><td>এনভায়রনমেন্ট অ্যাক্টিভ থাকাকালে রান করুন</td></tr>
+        <tr><td>এনভায়রনমেন্ট ক্লোন</td><td><code class="inline">conda create -n new_env --clone old_env</code></td><td>বিদ্যমান এনভায়রনমেন্টের হুবহু কপি তৈরি করে</td></tr>
+        <tr><td>এক্সপোর্ট (environment.yml)</td><td><code class="inline">conda env export > environment.yaml</code></td><td>সব প্যাকেজের তালিকাসহ ফাইল তৈরি করে — টিমের সাথে শেয়ারের জন্য উপযোগী</td></tr>
+        <tr><td>ইম্পোর্ট (YML থেকে)</td><td><code class="inline">conda env create -f environment.yaml</code></td><td>ফাইল থেকে হুবহু এনভায়রনমেন্ট রিক্রিয়েট করে</td></tr>
+      </tbody>
+    </table></div>
+
+    <details class="accordion">
+      <summary>উইন্ডোজে ড্রাইভ ও ডিরেক্টরি পরিবর্তন সংক্রান্ত কমান্ড <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <div class="acc-body">
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>bash</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-bash"># C: থেকে F: ড্রাইভে যেতে /d ফ্ল্যাগ ব্যবহার করুন
+cd /d F:\target\folder
+# অথবা
+F:
+cd \target\folder
+
+# নির্দিষ্ট পাথ থেকে VS Code খুলতে
+code "F:\My_PC_and_All\Project\EndToEndMLProject"
+
+# YAML থেকে নির্দিষ্ট কাস্টম পাথে এনভায়রনমেন্ট তৈরি
+conda env create -f environment.yaml -p "F:\Project\myenv"</code></pre></div>
+      </div>
+    </details>
+
+    <div class="callout callout-tip">
+      <i class="fa-solid fa-lightbulb callout-ic"></i>
+      <div><span class="callout-title">বেস্ট প্র্যাকটিস</span><p>প্রতিটি প্রকল্পের জন্য আলাদা এনভায়রনমেন্ট তৈরি করুন এবং প্রকল্পের শুরুতেই <code class="inline">environment.yaml</code> এক্সপোর্ট করে ভার্সন কন্ট্রোলে (Git) রাখুন — এতে অন্য কেউ (বা ভবিষ্যতে আপনি নিজেই) এক কমান্ডে একই এনভায়রনমেন্ট পুনরায় তৈরি করতে পারবেন এবং "এটা আমার মেশিনে কাজ করে" সমস্যা এড়ানো যাবে।</p></div>
+    </div>
+  </div>
+</section>
+<section class="chapter" id="ch-python">
+  <div class="chapter-head"><span class="chno">০২</span><h2>পাইথন ফান্ডামেন্টালস</h2></div>
+  <div class="lede">প্রতিটি ML প্রকল্পের শুরুতে প্রয়োজনীয় লাইব্রেরি ইম্পোর্ট এবং ফাইল হ্যান্ডলিং জানা আবশ্যক। নিচে সম্পূর্ণ প্রকল্পের জন্য একটি স্ট্যান্ডার্ড ইম্পোর্ট ব্লক এবং ফাইল অপারেশনের রেফারেন্স দেওয়া হলো।</div>
+
+  <div class="block">
+    <h3 class="sub">প্রয়োজনীয় লাইব্রেরি ইম্পোর্ট</h3>
+    <p>নিচের ব্লকটি একটি সাধারণ ট্যাবুলার ML প্রকল্পের শুরুতে ব্যবহারযোগ্য একটি সুসংগঠিত ইম্পোর্ট টেমপ্লেট — বিভাগ অনুযায়ী মন্তব্য (comment) সহ সাজানো।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># অপারেটিং সিস্টেমের সাথে ইন্টারঅ্যাকশন
+import os
+
+# ডেটা ম্যানিপুলেশন ও অ্যানালাইসিস
+import pandas as pd
+import numpy as np
+
+# ভিজুয়ালাইজেশন
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# পরিসংখ্যান
+from scipy import stats
+
+# মিসিং ভ্যালু ইম্পিউটেশন
+from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+
+# প্রি-প্রসেসিং ও স্কেলিং
+from sklearn.preprocessing import (
+    StandardScaler, MinMaxScaler, OneHotEncoder,
+    OrdinalEncoder, LabelEncoder, PolynomialFeatures
+)
+
+# পাইপলাইন ও মডেল সিলেকশন
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline, make_pipeline
+from sklearn.model_selection import (
+    train_test_split, cross_val_score,
+    GridSearchCV, RandomizedSearchCV,
+    StratifiedKFold, KFold
+)
+from sklearn.feature_selection import SelectKBest, chi2
+
+# ডাইমেনশনালিটি রিডাকশন
+from sklearn.decomposition import PCA
+
+# ক্লাসিফিকেশন মডেল
+from sklearn.linear_model import LogisticRegression
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import (
+    RandomForestClassifier, GradientBoostingClassifier, AdaBoostClassifier
+)
+from sklearn.naive_bayes import GaussianNB
+from xgboost import XGBClassifier
+from sklearn.neural_network import MLPClassifier
+
+# রিগ্রেশন মডেল
+from sklearn.linear_model import LinearRegression, Ridge, Lasso, ElasticNet
+from sklearn.svm import SVR
+from sklearn.neighbors import KNeighborsRegressor
+from sklearn.ensemble import (
+    RandomForestRegressor, GradientBoostingRegressor, AdaBoostRegressor
+)
+from sklearn.tree import DecisionTreeRegressor
+from xgboost import XGBRegressor
+from lightgbm import LGBMRegressor
+
+# ইভালুয়েশন মেট্রিক্স
+from sklearn.metrics import (
+    accuracy_score, confusion_matrix, classification_report,
+    mean_squared_error, r2_score
+)
+
+# ওয়ার্নিং উপেক্ষা করতে
+import warnings
+warnings.filterwarnings('ignore')</code></pre></div>
+    <div class="callout callout-tip">
+      <i class="fa-solid fa-lightbulb callout-ic"></i>
+      <div><span class="callout-title">টিপ</span><p>প্রয়োজনের সবকিছু একবারে ইম্পোর্ট না করে, প্রকল্পের প্রয়োজন অনুযায়ী ধাপে ধাপে ইম্পোর্ট করাই ভালো অভ্যাস — এতে কোড পড়া সহজ হয় এবং অপ্রয়োজনীয় ডিপেন্ডেন্সি এড়ানো যায়। উপরের ব্লকটি একটি "সম্পূর্ণ রেফারেন্স চিটশিট" হিসেবে ব্যবহার করুন।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">ফাইল হ্যান্ডলিং বেসিক — মোড রেফারেন্স</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>মোড</th><th>বিবরণ</th></tr></thead>
+      <tbody>
+        <tr><td><code class="inline">"r"</code></td><td>Read Mode — ফাইল পড়ার জন্য (ডিফল্ট)। ফাইল না থাকলে ত্রুটি (error) দেখাবে।</td></tr>
+        <tr><td><code class="inline">"w"</code></td><td>Write Mode — ফাইলে লেখার জন্য। বিদ্যমান ফাইল ওভাররাইট হয়ে যাবে।</td></tr>
+        <tr><td><code class="inline">"a"</code></td><td>Append Mode — ফাইলের শেষে নতুন কন্টেন্ট যোগ হয়; পুরনো ডেটা অক্ষত থাকে।</td></tr>
+        <tr><td><code class="inline">"r+"</code></td><td>Read and Write Mode — পড়া ও লেখা দুটোই করা যায়।</td></tr>
+        <tr><td><code class="inline">"w+"</code></td><td>Write and Read Mode — লেখা ও পড়া দুটোই; ফাইল থাকলে ওভাররাইট হয়।</td></tr>
+        <tr><td><code class="inline">"a+"</code></td><td>Append and Read Mode — শেষে লেখা ও পড়া দুটোই করা যায়।</td></tr>
+        <tr><td><code class="inline">"x"</code></td><td>Exclusive Creation Mode — নতুন ফাইল তৈরি করে; ফাইল আগে থেকে থাকলে ত্রুটি দেখাবে।</td></tr>
+        <tr><td><code class="inline">"b"</code></td><td>Binary Mode — বাইনারি ফাইল (ছবি, ভিডিও) পড়তে ব্যবহৃত হয়।</td></tr>
+        <tr><td><code class="inline">"t"</code></td><td>Text Mode — টেক্সট ফাইলের জন্য (ডিফল্ট)।</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">ফাইল অপারেশন — রি-ইউজেবল ফাংশন</h3>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># ১. ফাইলে লেখা
+def write_file(filename, content):
+    with open(filename, "w") as f:
+        f.write(content)
+    print(f"Data written to {filename}.")
+
+# ২. ফাইলে যোগ করা (append)
+def append_file(filename, content):
+    with open(filename, "a") as f:
+        f.write(content)
+    print(f"Data appended to {filename}.")
+
+# ৩. সম্পূর্ণ ফাইল পড়া
+def read_file(filename):
+    with open(filename, "r") as f:
+        content = f.read()
+    print(f"Content of {filename}:\n{content}")
+
+# ৪. লাইন বাই লাইন পড়া
+def read_file_by_lines(filename):
+    with open(filename, "r") as f:
+        lines = f.readlines()
+    for i, line in enumerate(lines, 1):
+        print(f"Line {i}: {line.strip()}")
+
+# ৫. ফাইল আছে কিনা যাচাই
+def check_file_exists(filename):
+    try:
+        with open(filename, "r") as f:
+            print(f"File {filename} exists.")
+    except FileNotFoundError:
+        print(f"File {filename} does not exist.")
+
+# ৬. পড়া ও লেখা একসাথে (r+ মোড)
+def read_and_write_file(filename, additional_content):
+    try:
+        with open(filename, "r+") as f:
+            print("Existing content:")
+            print(f.read())
+            f.write(additional_content)
+            print("Additional content written.")
+    except FileNotFoundError:
+        print(f"File {filename} not found.")
+
+# ৭. এক্সক্লুসিভ ক্রিয়েশন (x মোড)
+def create_file_exclusive(filename):
+    try:
+        with open(filename, "x") as f:
+            f.write("This is a newly created file using 'x' mode.")
+        print(f"File {filename} created.")
+    except FileExistsError:
+        print(f"File {filename} already exists.")</code></pre></div>
+    <div class="callout callout-warning">
+      <i class="fa-solid fa-triangle-exclamation callout-ic"></i>
+      <div><span class="callout-title">সতর্কতা</span><p>সবসময় <code class="inline">with open(...) as f:</code> ব্যবহার করুন, কারণ এটি নিশ্চিত করে ফাইলটি ব্যবহারের পর স্বয়ংক্রিয়ভাবে বন্ধ (close) হয়ে যাবে — এমনকি এক্সেপশন ঘটলেও। ম্যানুয়ালি <code class="inline">f.close()</code> কল করার প্রয়োজন হয় না এবং সহজেই ভুলে যাওয়ার ঝুঁকি থাকে না।</p></div>
+    </div>
+  </div>
+</section>
+<section class="chapter" id="ch-eda">
+  <div class="chapter-head"><span class="chno">০৩</span><h2>ডেটা এক্সপ্লোরেশন ও EDA</h2></div>
+  <div class="lede">Exploratory Data Analysis (EDA) হলো যেকোনো ML প্রকল্পের ভিত্তি — মিসিং ভ্যালু, আউটলাইয়ার, ডিস্ট্রিবিউশন ও কোরিলেশন বোঝা ছাড়া সঠিক মডেল তৈরি করা কঠিন। এই অধ্যায়ে <code class="inline">Handbook_ML</code> ও <code class="inline">ML_Function</code> — উভয় উৎস থেকে ফাংশনগুলো একত্রিত ও ডুপ্লিকেট-মুক্ত করে সেরা সংস্করণ উপস্থাপন করা হলো।</div>
+
+  <div class="block">
+    <h3 class="sub">মিসিং ডেটা বিশ্লেষণ</h3>
+    <p>প্রতিটি কলামে কতটুকু ডেটা মিসিং, তার ডেটাটাইপ কী এবং কতগুলো নাল ভ্যালু আছে — তা এক নজরে দেখার জন্য এই ফাংশনটি ব্যবহার করুন।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">def analyze_missing_data(dataframe):
+    """
+    প্রদত্ত DataFrame-এ মিসিং ডেটা বিশ্লেষণ করে।
+
+    Parameters
+    ----------
+    dataframe : pd.DataFrame
+        ইনপুট ডেটাফ্রেম।
+
+    Returns
+    -------
+    pd.DataFrame
+        Missing Percent, DataType ও Null Count সহ একটি সামারি টেবিল,
+        Missing Percent অনুযায়ী descending sort করা।
+    """
+    # প্রতিটি কলামের মিসিং শতাংশ হিসাব
+    missing_percent = (dataframe.isnull().sum() / dataframe.shape[0] * 100).sort_values(ascending=False)
+    missing_percent = missing_percent.apply(lambda x: f"{x:.2f}%")
+
+    # ডেটাটাইপ ও নাল কাউন্ট সংগ্রহ
+    info_df = pd.DataFrame({
+        'DataType': dataframe.dtypes,
+        'Null Count': dataframe.isnull().sum()
+    })
+
+    # একত্রিত করা
+    combined_df = pd.concat([missing_percent, info_df], axis=1)
+    combined_df.columns = ['Missing Percent', 'DataType', 'Null Count']
+
+    print(f'Number of rows: {dataframe.shape[0]}')
+    return combined_df.sort_values(by='Missing Percent', ascending=False)
+
+# ব্যবহার:
+# summary = analyze_missing_data(df)</code></pre></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">মিসিং ডেটা ভিজুয়ালাইজেশন</h3>
+    <p>শুধু টেবিল নয় — মিসিং ডেটার প্যাটার্ন বোঝার জন্য তিন ধরনের ভিজুয়ালাইজেশন কার্যকর: <strong>পাই + বার চার্ট</strong> (একাধিক ডেটাসেট তুলনা), <strong>Missingno ম্যাট্রিক্স</strong> (মিসিং-এর অবস্থান/প্যাটার্ন) এবং <strong>স্টাইলড হাইলাইট</strong> (নির্দিষ্ট রো দেখা)।</p>
+
+    <h4 class="subsub">পাই চার্ট + বার প্লট (একাধিক ডেটাসেট তুলনা)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import matplotlib.pyplot as plt
+
+def plot_missing_data(*datasets, names=None):
+    """
+    একাধিক ডেটাসেটের মিসিং ভ্যালুর তুলনামূলক চার্ট (pie + bar) দেখায়।
+
+    Parameters
+    ----------
+    *datasets : pd.DataFrame
+        একাধিক pandas DataFrame।
+    names : list, optional
+        রেফারেন্সের জন্য ডেটাসেট নামের তালিকা।
+    """
+    if names is None:
+        names = [f"Dataset {i+1}" for i in range(len(datasets))]
+
+    missing_values = {
+        name: df.isnull().sum()[df.isnull().sum() > 0]  # শুধু মিসিং-যুক্ত কলাম
+        for df, name in zip(datasets, names)
+    }
+    missing_values = {name: v for name, v in missing_values.items() if not v.empty}
+
+    if not missing_values:
+        print("No missing values in the provided datasets.")
+        return
+
+    fig, axes = plt.subplots(len(missing_values), 2, figsize=(12, len(missing_values) * 5))
+    if len(missing_values) == 1:
+        axes = [axes]
+
+    for ax, (name, missing_data) in zip(axes, missing_values.items()):
+        ax[0].pie(missing_data, labels=missing_data.index, autopct='%1.1f%%', startangle=90)
+        ax[0].set_title(f'Missing Values in {name} Dataset')
+
+        ax[1].barh(missing_data.index, missing_data.values, color='skyblue')
+        ax[1].set_title(f'Missing Values in {name} Dataset')
+        ax[1].set_xlabel('Count')
+        ax[1].invert_yaxis()
+
+    plt.tight_layout()
+    plt.show()
+
+# ব্যবহার:
+# plot_missing_data(train, test, train_ex, names=["Train", "Test", "Train_ex"])</code></pre></div>
+
+    <h4 class="subsub">Missingno ম্যাট্রিক্স (মিসিং প্যাটার্ন)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import missingno as msno
+
+def plot_missing_data_matrix(*datasets, names=None):
+    """একাধিক ডেটাসেটের জন্য missingno ম্যাট্রিক্স দিয়ে মিসিং-এর অবস্থান দেখায়।"""
+    if names is None:
+        names = [f"Dataset {i+1}" for i in range(len(datasets))]
+
+    colors = [(0.0, 0.2, 0.4), (0.0, 0.4, 0.2), (0.6, 0.2, 0.0), (0.4, 0.0, 0.6), (0.2, 0.6, 0.2)]
+
+    for i, (df, name) in enumerate(zip(datasets, names)):
+        plt.figure(figsize=(12, 6))
+        msno.matrix(df, color=colors[i % len(colors)])
+        plt.title(f"Missing Data Locations in {name} Dataset", fontsize=24)
+        plt.xlabel("Columns", fontsize=20)
+        plt.show()
+
+# ব্যবহার:
+# plot_missing_data_matrix(train, test, names=["Train", "Test"])</code></pre></div>
+
+    <h4 class="subsub">নির্দিষ্ট রো হাইলাইট ও ইনডেক্স খুঁজে বের করা</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">def highlight_missing(val):
+    """মিসিং ভ্যালু স্টাইল হাইলাইট করে (Jupyter-এ .style এর সাথে ব্যবহারযোগ্য)।"""
+    return 'background-color: SkyBlue; border: 1px solid red' if pd.isna(val) else ''
+
+def get_representative_rows(df):
+    """প্রতিটি মিসিং কলামের জন্য একটি প্রতিনিধিত্বমূলক রো রিটার্ন করে।"""
+    columns_with_issues = df.columns[df.isnull().sum() > 0]
+    representative_rows = pd.concat(
+        [df[df[col].isnull()].iloc[:1] for col in columns_with_issues]
+    ).drop_duplicates()
+    return representative_rows.sort_values(by='id') if 'id' in representative_rows.columns else representative_rows
+
+def visualize_missing_values(*datasets, names=None):
+    """মিসিং ভ্যালুসহ রো-গুলো স্টাইল করে হাইলাইট করে দেখায় (Jupyter Notebook-এ)।"""
+    if names is None:
+        names = [f"Dataset {i+1}" for i in range(len(datasets))]
+    for df, name in zip(datasets, names):
+        print(f"Missing Values in {name} Dataset")
+        representative_rows = get_representative_rows(df)
+        display(representative_rows.style.applymap(highlight_missing))
+
+def get_missing_data_indices(*datasets, names=None, top_n=100, min_nans=1, max_nans=None):
+    """
+    মিসিং ভ্যালুর সংখ্যা অনুযায়ী সাজানো রো-ইনডেক্সের তালিকা রিটার্ন করে।
+
+    Parameters
+    ----------
+    top_n : int — সর্বোচ্চ কতগুলো রো রিটার্ন করবে (ডিফল্ট 100)
+    min_nans : int — একটি রো-তে ন্যূনতম কতগুলো NaN থাকতে হবে
+    max_nans : int, optional — সর্বোচ্চ কতগুলো NaN থাকতে পারবে
+    """
+    missing_data_info = []
+    for df in datasets:
+        nan_counts = df.isna().sum(axis=1)
+        if max_nans is not None:
+            filtered_rows = nan_counts[(nan_counts >= min_nans) & (nan_counts <= max_nans)]
+        else:
+            filtered_rows = nan_counts[nan_counts >= min_nans]
+        sorted_row_indices = filtered_rows.sort_values(ascending=False).head(top_n).index.tolist()
+        missing_data_info.extend(sorted_row_indices)
+    return missing_data_info
+
+# ব্যবহার:
+# result = get_missing_data_indices(train, test, names=["Train", "Test"], top_n=100, min_nans=2, max_nans=10)</code></pre></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">কুয়েরি টেকনিক (pandas <code class="inline">.query()</code>)</h3>
+    <p>ফিল্টারিং-এর জন্য <code class="inline">pandas.query()</code> SQL-এর মতো readable সিনট্যাক্স দেয়। নিচে সাধারণ ব্যবহারের উদাহরণ:</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># সাধারণ ফিল্টারিং
+high_price_houses = train_df.query('SalePrice > 700000')
+
+# একাধিক শর্ত
+filtered = train_df.query('SalePrice > 700000 and BedroomAbvGr > 4')
+
+# ভেরিয়েবল ব্যবহার (@ চিহ্ন দিয়ে)
+min_price = 700000
+filtered = train_df.query('SalePrice > @min_price')
+
+# স্ট্রিং ভ্যালু ফিল্টার
+filtered = train_df.query('Neighborhood in ["NAmes", "CollgCr"]')
+
+# কলামে ম্যাথ অপারেশন
+filtered = train_df.query('SalePrice / GrLivArea > 300')
+
+# NaN বাদ দিতে
+filtered = train_df.query('SalePrice == SalePrice')  # NaN != NaN হওয়ায় এটি NaN বাদ দেয়
+
+# ইনডেক্স ফিল্টার
+filtered = train_df.query('index >= 100 and index <= 200')
+
+# কলামের নামে স্পেস থাকলে ব্যাকটিক (`) ব্যবহার করুন
+filtered = train_df.query('`Sale Price` > 700000')</code></pre></div>
+
+    <h4 class="subsub">রি-ইউজেবল কুয়েরি ইঞ্জিন — <code class="inline">query_dataframe()</code></h4>
+    <p>উপরের প্যাটার্নগুলোকে একটি সাধারণ, পুনঃব্যবহারযোগ্য ফাংশনে মোড়ানো যায় যা filter/group/sort/stats — চারটি কাজই করতে পারে। সম্পূর্ণ কোড ও ব্যবহারবিধি <a href="#util-query">অধ্যায় ১৮ — ইউটিলিটি ফাংশনে</a> দেওয়া আছে।</p>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">কোরিলেশন অ্যানালাইসিস ও হিটম্যাপ</h3>
+    <p>টার্গেট ভ্যারিয়েবলের সাথে কোন ফিচারগুলো সর্বোচ্চ সম্পর্কযুক্ত তা জানতে এই ফাংশনটি একইসাথে হিটম্যাপ ও একটি মেজর-কোরিলেশন-পেয়ার টেবিল তৈরি করে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">def analyze_correlations(df, target_column="SalePrice", corr_threshold=0.7):
+    """
+    টার্গেট কলামের সাথে হাইলি-কোরিলেটেড ফিচারের হিটম্যাপ এবং
+    নির্দিষ্ট থ্রেশহোল্ডের উপরে মেজর কোরিলেশন পেয়ারের টেবিল তৈরি করে।
+
+    Parameters
+    ----------
+    target_column : str — টার্গেট কলামের নাম
+    corr_threshold : float — মেজর পেয়ারের জন্য থ্রেশহোল্ড (ডিফল্ট 0.7)
+    """
+    if target_column not in df.columns:
+        raise ValueError(f"Target column '{target_column}' not found in DataFrame.")
+
+    numeric_df = df.select_dtypes(include=['number'])
+    correlation_matrix = numeric_df.corr()
+
+    # আউটপুট ১: টার্গেটের সাথে |corr| > 0.5 ফিচারের হিটম্যাপ
+    top_corr = correlation_matrix.index[abs(correlation_matrix[target_column]) > 0.5]
+    if len(top_corr) > 0:
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(numeric_df[top_corr].corr(), annot=True, cmap="YlGnBu",
+                    square=True, cbar_kws={'label': 'Correlation'})
+        plt.suptitle(f"Top Correlated Feature HeatMap (Correlation > 0.5 with {target_column})")
+        plt.tight_layout()
+        plt.show()
+    else:
+        print(f"No features with correlation > 0.5 with '{target_column}' found.")
+
+    # আউটপুট ২: থ্রেশহোল্ডের উপরে মেজর কোরিলেশন পেয়ার
+    abs_corr_matrix = correlation_matrix.abs()
+    corr_pairs = abs_corr_matrix.stack().reset_index()
+    corr_pairs.columns = ['Variable1', 'Variable2', 'Correlation']
+    corr_pairs = corr_pairs[corr_pairs['Variable1'] != corr_pairs['Variable2']]
+
+    major_corr_pairs = corr_pairs[corr_pairs['Correlation'] >= corr_threshold].reset_index(drop=True)
+    major_corr_pairs = major_corr_pairs.sort_values(by=['Variable1', 'Variable2'])
+    # একই পেয়ার দুইবার (A-B এবং B-A) এড়াতে
+    major_corr_pairs = major_corr_pairs[
+        major_corr_pairs['Variable1'] < major_corr_pairs['Variable2']
+    ].reset_index(drop=True)
+
+    print(f"\nMajor Correlation Pairs (Correlation >= {corr_threshold}):")
+    print(major_corr_pairs if not major_corr_pairs.empty else f"No pairs with correlation >= {corr_threshold} found.")</code></pre></div>
+    <div class="callout callout-tip">
+      <i class="fa-solid fa-lightbulb callout-ic"></i>
+      <div><span class="callout-title">সংক্ষিপ্ত বিকল্প</span><p>দ্রুত শুধু হিটম্যাপ দরকার হলে সরল সংস্করণ ব্যবহার করুন: <code class="inline">plot_top_correlations(df, target_column, threshold=0.5)</code> — এটি <code class="inline">analyze_correlations()</code>-এর হিটম্যাপ অংশের সমতুল্য, কিন্তু কোরিলেশন-পেয়ার টেবিল দেয় না। সম্পূর্ণ বিশ্লেষণের জন্য <code class="inline">analyze_correlations()</code> ব্যবহার করাই ভালো।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">স্ক্যাটার প্লট ও Z-স্কোর ভিত্তিক আউটলাইয়ার প্রিভিউ</h3>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from scipy import stats
+
+def scatter_plot(feature, train_df, target='SalePrice'):
+    """
+    একটি ফিচারকে টার্গেটের বিপরীতে স্ক্যাটার প্লট করে এবং
+    সেই ফিচারের টপ ৫ ও বটম ৫ Z-স্কোর দেখায় (সম্ভাব্য আউটলাইয়ার ধরতে সাহায্য করে)।
+    """
+    if feature not in train_df.columns or target not in train_df.columns:
+        raise ValueError(f"Feature '{feature}' or '{target}' not found in DataFrame.")
+
+    sns.set_style("whitegrid")
+    plt.figure(figsize=(10, 6))
+    sns.scatterplot(data=train_df, x=feature, y=target, edgecolor='red', linewidth=1, s=50)
+    plt.title(f"Scatter Plot of {feature} and {target}", fontsize=15, pad=10)
+    plt.xlabel(feature, fontsize=12)
+    plt.ylabel(target, fontsize=12)
+    plt.tight_layout()
+    plt.show()
+
+    # Z-স্কোর হিসাব (শুধুমাত্র সংখ্যাসূচক কলামের জন্য)
+    if pd.api.types.is_numeric_dtype(train_df[feature]):
+        z_scores = stats.zscore(train_df[feature].dropna())
+        z_scores_series = pd.Series(z_scores, index=train_df[feature].dropna().index)
+        z_scores_sorted = z_scores_series.sort_values()
+
+        top_5 = z_scores_sorted.head(5)
+        bottom_5 = z_scores_sorted.tail(5)
+        combined = pd.DataFrame({'Top 5 Z-Scores': top_5, 'Bottom 5 Z-Scores': bottom_5})
+        print(f"Z-Score summary for {feature}")
+        print(combined)</code></pre></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">ফিচার ডিস্ট্রিবিউশন ভিজুয়ালাইজেশন</h3>
+    <p>নিচের <code class="inline">visualize_feature()</code> ফাংশনটি একটি সাধারণ (single-dataset) ফিচারের জন্য পাঁচ ধরনের প্লট (box, kde, hist, violin, scatter) সাপোর্ট করে — সবচেয়ে ফ্লেক্সিবল ও প্রস্তাবিত অপশন।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">def visualize_feature(df, feature, plot_type="box", target_column="SalePrice"):
+    """
+    নির্বাচিত plot_type অনুযায়ী একটি ফিচারের ভিজুয়ালাইজেশন তৈরি করে।
+
+    plot_type: 'box', 'kde', 'hist', 'violin', অথবা 'scatter'
+    """
+    if feature not in df.columns:
+        raise ValueError(f"Feature '{feature}' not found in DataFrame.")
+
+    sns.set_style("whitegrid")
+    plt.figure(figsize=(10, 6))
+
+    if plot_type.lower() == "box":
+        sns.boxplot(x=df[feature])
+        plt.title(f"Box Plot of {feature}", fontsize=15, pad=10)
+    elif plot_type.lower() == "kde":
+        sns.kdeplot(data=df[feature], fill=True)
+        plt.title(f"KDE Plot of {feature}", fontsize=15, pad=10)
+    elif plot_type.lower() == "hist":
+        sns.histplot(data=df[feature], bins=30, kde=True)
+        plt.title(f"Histogram of {feature}", fontsize=15, pad=10)
+    elif plot_type.lower() == "violin":
+        sns.violinplot(x=df[feature])
+        plt.title(f"Violin Plot of {feature}", fontsize=15, pad=10)
+    elif plot_type.lower() == "scatter":
+        if target_column not in df.columns:
+            raise ValueError(f"Target column '{target_column}' not found in DataFrame.")
+        sns.scatterplot(data=df, x=feature, y=target_column, edgecolor='red', linewidth=1, s=50)
+        plt.title(f"Scatter Plot of {feature} and {target_column}", fontsize=15, pad=10)
+        plt.ylabel(target_column, fontsize=12)
+    else:
+        raise ValueError(f"Unsupported plot_type: '{plot_type}'. Choose from 'box', 'kde', 'hist', 'violin', 'scatter'.")
+
+    plt.xlabel(feature, fontsize=12)
+    plt.tight_layout()
+    plt.show()
+
+# ব্যবহার:
+# visualize_feature(train_df, 'GrLivArea', plot_type='box')
+# visualize_feature(train_df, 'GrLivArea', plot_type='scatter', target_column='SalePrice')</code></pre></div>
+
+    <details class="accordion">
+      <summary>একাধিক ডেটাসেট তুলনার জন্য ভিজুয়ালাইজেশন ফাংশন (Price / Numeric / Categorical) <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <div class="acc-body">
+        <p>যখন train/test/validation-এর মতো একাধিক ডেটাসেট পাশাপাশি তুলনা করতে হয়, তখন নিচের তিনটি ফাংশন কাজে লাগে।</p>
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import math
+
+def plot_price_distributions(*data_frames, column="Price", ncols=2):
+    """একাধিক ডেটাফ্রেমে নির্দিষ্ট কলামের (ডিফল্ট: Price) ডিস্ট্রিবিউশন পাশাপাশি দেখায়।"""
+    n_dataframes = len(data_frames)
+    if n_dataframes == 0:
+        raise ValueError("At least one DataFrame must be provided.")
+    nrows = math.ceil(n_dataframes / ncols)
+
+    plt.figure(figsize=(12, 4 * nrows))
+    for i, df in enumerate(data_frames, 1):
+        plt.subplot(nrows, ncols, i)
+        sns.histplot(df[column], bins=50, kde=True, color=f'C{i-1}')
+        plt.title(f"DataFrame {i} [{column}] Distribution")
+        plt.xlabel(column)
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_numeric_distributions(*data_frames, ncols=3):
+    """একাধিক ডেটাসেটের সব সংখ্যাসূচক কলামের ডিস্ট্রিবিউশন গ্রিডে দেখায়।"""
+    if not data_frames:
+        raise ValueError("At least one DataFrame must be provided.")
+
+    num_cols = data_frames[0].select_dtypes(include=['number']).columns
+    nrows = len(num_cols)
+
+    plt.figure(figsize=(12, nrows * 3))
+    for i, col in enumerate(num_cols):
+        for j, df in enumerate(data_frames):
+            plt.subplot(nrows, ncols, i * ncols + j + 1)
+            sns.histplot(df[col], bins=10, color=f'C{j}')
+            plt.title(f"DataFrame {j+1} [{col}] Distribution")
+            plt.xlabel(col)
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_categorical_pie_charts(*data_frames):
+    """একাধিক ডেটাসেটের ক্যাটেগরিক্যাল ভ্যারিয়েবলের পাই-চার্ট তুলনা দেখায়।"""
+    if not data_frames:
+        raise ValueError("At least one DataFrame must be provided.")
+
+    obj_cols = data_frames[0].select_dtypes(include=['object']).columns
+    sns.set_style('whitegrid')
+
+    for variable in obj_cols:
+        fig, axes = plt.subplots(1, len(data_frames), figsize=(5 * len(data_frames), 5))
+        if len(data_frames) == 1:
+            axes = [axes]
+        plt.subplots_adjust(wspace=0.3)
+
+        for i, (df, ax) in enumerate(zip(data_frames, axes)):
+            df[variable].value_counts().plot.pie(
+                ax=ax, autopct='%1.1f%%', startangle=90,
+                colors=sns.color_palette('Set2', n_colors=len(df[variable].unique()))
+            )
+            ax.set_ylabel('')
+            ax.set_title(f"DataFrame {i+1} [{variable}]")
+        plt.show()</code></pre></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="callout callout-note">
+    <i class="fa-solid fa-circle-info callout-ic"></i>
+    <div><span class="callout-title">আউটলাইয়ার সংক্রান্ত</span><p>উপরে Z-স্কোর ভিত্তিক আউটলাইয়ার প্রিভিউ দেখানো হয়েছে; আউটলাইয়ার detect ও treat করার সম্পূর্ণ ফাংশন (<code class="inline">handle_outliers()</code>, zscore ও IQR উভয় পদ্ধতিসহ) <a href="#ch-outlier">অধ্যায় ৫ — আউটলাইয়ার হ্যান্ডলিং</a>-এ দেওয়া আছে।</p></div>
+  </div>
+</section>
+<section class="chapter" id="ch-impute">
+  <div class="chapter-head"><span class="chno">০৪</span><h2>মিসিং ভ্যালু ইম্পিউটেশন</h2></div>
+  <div class="lede">মিসিং ভ্যালু পূরণের পদ্ধতি সহজ থেকে জটিল পর্যন্ত বিস্তৃত — সিম্পল স্ট্যাটিস্টিক্যাল পূরণ থেকে শুরু করে মাল্টি-ভেরিয়েবল ও ডিপ-লার্নিং-ভিত্তিক পদ্ধতি পর্যন্ত। সঠিক পদ্ধতি নির্বাচন ডেটার প্রকৃতি ও মিসিংনেসের কারণের উপর নির্ভর করে।</div>
+
+  <div class="block">
+    <h3 class="sub">একক-ভেরিয়েবল ইম্পিউটেশন (Simple Imputation)</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>পদ্ধতি</th><th>ব্যবহারযোগ্য ডেটা</th><th>কীভাবে কাজ করে</th><th>উদাহরণ (sklearn)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Mean Imputation</strong></td><td>সংখ্যাসূচক</td><td>গড় (mean) দিয়ে পূরণ</td><td><code class="inline">SimpleImputer(strategy='mean')</code></td></tr>
+        <tr><td><strong>Median Imputation</strong></td><td>সংখ্যাসূচক</td><td>মধ্যক (median) দিয়ে পূরণ</td><td><code class="inline">SimpleImputer(strategy='median')</code></td></tr>
+        <tr><td><strong>Mode Imputation</strong></td><td>শ্রেণীবদ্ধ ও সংখ্যাসূচক</td><td>সর্বাধিক সাধারণ মান</td><td><code class="inline">SimpleImputer(strategy='most_frequent')</code></td></tr>
+        <tr><td><strong>Constant Imputation</strong></td><td>শ্রেণীবদ্ধ ও সংখ্যাসূচক</td><td>স্থির মান (যেমন 0, 'Unknown')</td><td><code class="inline">SimpleImputer(strategy='constant', fill_value=0)</code></td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>টাইম সিরিজ ইম্পিউটেশন:</strong> সময়ানুক্রমিক ডেটায় Forward Fill (<code class="inline">df.fillna(method='ffill')</code>) বা Backward Fill (<code class="inline">df.fillna(method='bfill')</code>) ব্যবহার করা হয়, যেখানে আগের/পরের মান দিয়ে ফাঁক পূরণ করা হয়।</p>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">বহু-ভেরিয়েবল ইম্পিউটেশন</h3>
+    <h4 class="subsub">KNN Imputation</h4>
+    <p>নিকটতম প্রতিবেশী (k-nearest neighbors) ডেটাপয়েন্টগুলোর গড় ব্যবহার করে মিসিং ভ্যালু অনুমান করে — একাধিক ফিচারের মধ্যে সম্পর্ক বিবেচনা করে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.impute import KNNImputer
+
+imputer = KNNImputer(n_neighbors=5)
+df_imputed = imputer.fit_transform(df)</code></pre></div>
+
+    <h4 class="subsub">MICE (Multiple Imputation by Chained Equations)</h4>
+    <p>প্রতিটি মিসিং ফিচারকে অন্যান্য ফিচারের উপর ভিত্তি করে ধাপে ধাপে (iteratively) মডেল করে পূরণ করে — জটিল আন্তঃফিচার সম্পর্ক থাকলে কার্যকর।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
+
+imputer = IterativeImputer(max_iter=10, random_state=42)
+df_imputed = imputer.fit_transform(df)</code></pre></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">উন্নত ইম্পিউটেশন পদ্ধতি</h3>
+
+    <h4 class="subsub">১. Similar Rows Based Imputation (গ্রুপিং)</h4>
+    <p>একই গ্রুপের (যেমন <code class="inline">brand</code>, <code class="inline">model</code>, <code class="inline">model_year</code>) মধ্যে mode বা mean ব্যবহার করে পূরণ করা হয়।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># Mode দিয়ে পূরণ (শ্রেণীবদ্ধ ডেটার জন্য)
+df['engine'] = df.groupby(['brand', 'model', 'model_year'])['engine'].transform(
+    lambda x: x.fillna(x.mode()[0] if not x.mode().empty else x)
+)
+
+# Mean দিয়ে পূরণ (সংখ্যাসূচক ডেটার জন্য)
+df['milage'] = df.groupby(['brand', 'model'])['milage'].transform(lambda x: x.fillna(x.mean()))</code></pre></div>
+
+    <h4 class="subsub">২. Predictive Modeling Imputation</h4>
+    <p>অন্যান্য ফিচারের ওপর ভিত্তি করে একটি মডেল তৈরি করে মিসিং ভ্যালু প্রেডিক্ট করা হয় — নিচের উদাহরণে <code class="inline">RandomForestRegressor</code> দিয়ে <code class="inline">engine</code> কলাম পূরণ করা হচ্ছে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import LabelEncoder
+
+# ক্যাটেগরিক্যাল কলাম এনকোডিং
+le = LabelEncoder()
+for col in categorical_cols:
+    df[col] = le.fit_transform(df[col].astype(str))
+
+# ট্রেন ও টেস্ট সেট আলাদা (যেখানে engine নাল, সেটাই টেস্ট)
+train = df.dropna(subset=['engine'])
+test = df[df['engine'].isnull()]
+
+X_train = train[['brand', 'model', 'model_year', 'milage', 'price']]
+y_train = train['engine']
+X_test = test[['brand', 'model', 'model_year', 'milage', 'price']]
+
+model = RandomForestRegressor()
+model.fit(X_train, y_train)
+test['engine'] = model.predict(X_test)
+
+df.loc[df['engine'].isnull(), 'engine'] = test['engine']</code></pre></div>
+
+    <h4 class="subsub">৩. Group-Based Mean/Mode Imputation (মাল্টি-লেয়ার)</h4>
+    <p>একাধিক স্তরের গ্রুপিং প্রয়োগ করে ক্রমান্বয়ে পূরণ করা হয় — প্রথমে সবচেয়ে নির্দিষ্ট গ্রুপ, তারপর ধীরে ধীরে ব্যাপকতর গ্রুপ, সবশেষে গ্লোবাল গড়।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># প্রথম স্তর: Neighborhood অনুযায়ী গড়
+df['LotFrontage'] = df.groupby('Neighborhood')['LotFrontage'].transform(lambda x: x.fillna(x.mean()))
+
+# দ্বিতীয় স্তর: LotConfig অনুযায়ী গড় (যা প্রথম স্তরে পূরণ হয়নি)
+df['LotFrontage'] = df.groupby('LotConfig')['LotFrontage'].transform(lambda x: x.fillna(x.mean()))
+
+# সর্বশেষ ধাপ: গ্লোবাল গড় (যেকোনো অবশিষ্ট NaN-এর জন্য)
+df['LotFrontage'] = df['LotFrontage'].fillna(df['LotFrontage'].mean())</code></pre></div>
+
+    <h4 class="subsub">৪. Deep Learning-Based Imputation (Autoencoder)</h4>
+    <p>একটি ছোট নিউরাল নেটওয়ার্ক (autoencoder-স্টাইল) ট্রেন করা হয় ডেটার নিজস্ব প্যাটার্ন পুনর্গঠন (reconstruct) করতে, যা অ-লিনিয়ার সম্পর্ক ক্যাপচার করতে পারে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
+from sklearn.preprocessing import StandardScaler
+
+# প্রাথমিকভাবে গড় দিয়ে পূরণ (placeholder), তারপর মডেল দিয়ে পরিমার্জন
+df_filled = df.fillna(df.mean())
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(df_filled)
+
+model = Sequential([
+    Dense(64, activation='relu', input_dim=X_scaled.shape[1]),
+    Dense(32, activation='relu'),
+    Dense(X_scaled.shape[1], activation='linear')
+])
+model.compile(optimizer='adam', loss='mse')
+model.fit(X_scaled, X_scaled, epochs=100, verbose=0)
+
+X_pred = model.predict(X_scaled)
+df_imputed = pd.DataFrame(X_pred, columns=df.columns)</code></pre></div>
+    <div class="callout callout-warning">
+      <i class="fa-solid fa-triangle-exclamation callout-ic"></i>
+      <div><span class="callout-title">সতর্কতা</span><p>ডিপ-লার্নিং-ভিত্তিক ইম্পিউটেশন ছোট ডেটাসেটে ওভারফিট করতে পারে এবং কম্পিউটেশনালি ব্যয়বহুল। সাধারণ প্রকল্পে এটি ব্যবহারের আগে KNN বা MICE-এর মতো সহজ পদ্ধতি দিয়ে বেসলাইন তৈরি করুন।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">ইম্পিউটেশন পদ্ধতির তুলনামূলক টেবিল</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>পদ্ধতি</th><th>কৌশল</th><th>ব্যবহারের সময়</th><th>কোড (উদাহরণ)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Similar Rows Based</strong></td><td>একই গ্রুপের মান দেখে পূরণ</td><td>একই গ্রুপে সম্পূর্ণ ডেটা থাকলে</td><td><code class="inline">groupby().transform(...)</code></td></tr>
+        <tr><td><strong>Predictive Modeling</strong></td><td>মডেল (যেমন RandomForest) দিয়ে প্রেডিক্ট</td><td>অন্যান্য ফিচারের সাথে সম্পর্ক থাকলে</td><td><code class="inline">RandomForestRegressor().fit(...)</code></td></tr>
+        <tr><td><strong>Group-Based Mean/Mode</strong></td><td>গ্রুপের গড় বা mode ব্যবহার</td><td>গ্রুপভিত্তিক ডেটা প্রচুর থাকলে</td><td><code class="inline">groupby().transform(...)</code></td></tr>
+        <tr><td><strong>MICE</strong></td><td>চেইনড ইকুয়েশন (iterative)</td><td>জটিল আন্তঃফিচার সম্পর্ক থাকলে</td><td><code class="inline">IterativeImputer()</code></td></tr>
+        <tr><td><strong>KNN</strong></td><td>নিকটতম প্রতিবেশী</td><td>সংখ্যাসূচক ডেটার জন্য</td><td><code class="inline">KNNImputer(n_neighbors=5)</code></td></tr>
+      </tbody>
+    </table></div>
+    <div class="callout callout-tip">
+      <i class="fa-solid fa-lightbulb callout-ic"></i>
+      <div><span class="callout-title">সিদ্ধান্ত নেওয়ার সহজ নিয়ম</span><p>প্রথমে সবসময় <strong>simple imputation (mean/median/mode)</strong> দিয়ে একটি বেসলাইন তৈরি করুন। মিসিংনেসের হার ৫%-এর কম হলে সাধারণত simple imputation যথেষ্ট। মিসিংনেস বেশি বা প্যাটার্নযুক্ত হলে <strong>group-based</strong> বা <strong>KNN/MICE</strong>-এর দিকে যান। শুধুমাত্র বড় ডেটাসেট ও জটিল non-linear সম্পর্কের ক্ষেত্রে predictive/deep-learning ইম্পিউটেশন বিবেচনা করুন — এগুলোর কম্পিউটেশন খরচ বেশি।</p></div>
+    </div>
+  </div>
+</section>
+<section class="chapter" id="ch-outlier">
+  <div class="chapter-head"><span class="chno">০৫</span><h2>আউটলাইয়ার হ্যান্ডলিং</h2></div>
+  <div class="lede">আউটলাইয়ার (outlier) হলো এমন ডেটাপয়েন্ট যা বাকি ডেটা থেকে উল্লেখযোগ্যভাবে ভিন্ন — এগুলো মডেলের পারফরম্যান্সে বড় প্রভাব ফেলতে পারে, বিশেষত লিনিয়ার মডেলে। নিচের একক ফাংশনটি জ-স্কোর (Z-score) ও IQR — দুই পদ্ধতিতেই আউটলাইয়ার detect, report, remove বা cap করতে পারে।</div>
+
+  <div class="block">
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from scipy import stats
+import numpy as np
+
+def handle_outliers(df, column, method='zscore', threshold=3, action='report'):
+    """
+    নির্দিষ্ট কলামে Z-score বা IQR পদ্ধতিতে আউটলাইয়ার শনাক্ত ও হ্যান্ডল করে।
+
+    Parameters
+    ----------
+    method : 'zscore' অথবা 'iqr'
+    threshold : Z-score-এর জন্য কাটঅফ (ডিফল্ট 3), IQR-এর জন্য মাল্টিপ্লায়ার
+    action : 'report' (শুধু রিপোর্ট), 'remove' (রো বাদ), 'cap' (শুধু iqr-এ সম্ভব)
+
+    Returns
+    -------
+    pd.DataFrame — action='remove'/'cap' হলে পরিবর্তিত ডেটাফ্রেম, নাহলে মূল ডেটাফ্রেম
+    """
+    df_copy = df.copy()
+    if column not in df_copy.columns:
+        raise ValueError(f"Column '{column}' not found in DataFrame.")
+
+    if method == 'zscore':
+        z_scores = np.abs(stats.zscore(df_copy[column].dropna()))
+        outliers = z_scores > threshold
+        outlier_indices = df_copy[column].dropna().index[outliers]
+
+    elif method == 'iqr':
+        Q1 = df_copy[column].quantile(0.25)
+        Q3 = df_copy[column].quantile(0.75)
+        IQR = Q3 - Q1
+        lower_bound = Q1 - threshold * IQR
+        upper_bound = Q3 + threshold * IQR
+        outliers = (df_copy[column] < lower_bound) | (df_copy[column] > upper_bound)
+        outlier_indices = df_copy[outliers].index
+
+    else:
+        raise ValueError(f"Invalid method: '{method}'. Choose 'zscore' or 'iqr'.")
+
+    print(f"Outliers in {column} ({method}): {len(outlier_indices)} rows")
+    if len(outlier_indices) > 0:
+        print(df_copy.loc[outlier_indices, [column]].head())
+
+    if action == 'remove':
+        df_copy = df_copy.drop(outlier_indices)
+    elif action == 'cap' and method == 'iqr':
+        df_copy[column] = df_copy[column].clip(lower=lower_bound, upper=upper_bound)
+    elif action == 'cap' and method == 'zscore':
+        print("Capping not supported for Z-score; use 'iqr' method or 'remove'.")
+
+    return df_copy
+
+# ব্যবহার:
+# df_clean = handle_outliers(df, 'SalePrice', method='iqr', threshold=1.5, action='cap')</code></pre></div>
+  </div>
+
+  <div class="grid-cards">
+    <div class="card"><span class="tag">Z-Score</span><h4><i class="fa-solid fa-chart-line"></i> কখন ব্যবহার করবেন</h4><p>ডেটা প্রায় স্বাভাবিক (normal) বণ্টনের হলে। সাধারণত <code class="inline">|z| &gt; 3</code> আউটলাইয়ার ধরা হয়।</p></div>
+    <div class="card"><span class="tag">IQR</span><h4><i class="fa-solid fa-chart-simple"></i> কখন ব্যবহার করবেন</h4><p>স্কিউড (skewed) ডেটায় বেশি নির্ভরযোগ্য; এতে <code class="inline">cap</code> অ্যাকশনও সমর্থিত (winsorization)।</p></div>
+    <div class="card"><span class="tag">action</span><h4><i class="fa-solid fa-scissors"></i> remove vs cap</h4><p><code class="inline">remove</code> ডেটা হারায়, <code class="inline">cap</code> (clip) মান সীমাবদ্ধ করে ডেটা সংরক্ষণ করে — সাধারণত <code class="inline">cap</code> বেশি নিরাপদ।</p></div>
+  </div>
+
+  <div class="callout callout-warning">
+    <i class="fa-solid fa-triangle-exclamation callout-ic"></i>
+    <div><span class="callout-title">সতর্কতা</span><p>সব আউটলাইয়ার "ভুল ডেটা" নয় — কখনো কখনো এগুলো বাস্তব ও গুরুত্বপূর্ণ ঘটনা (যেমন জালিয়াতি সনাক্তকরণে)। রিমুভ বা ক্যাপ করার আগে ডোমেইন নলেজ দিয়ে যাচাই করুন যে আউটলাইয়ারটি ডেটা এন্ট্রি ত্রুটি নাকি প্রকৃত সিগন্যাল।</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="ch-encoding">
+  <div class="chapter-head"><span class="chno">০৬</span><h2>ক্যাটেগরিক্যাল ডেটা এনকোডিং</h2></div>
+  <div class="lede">মেশিন লার্নিং মডেল সাধারণত সংখ্যাসূচক ইনপুট প্রত্যাশা করে, তাই ক্যাটেগরিক্যাল (categorical) ডেটাকে সংখ্যায় রূপান্তর করতে হয়। নিচে ছয়টি জনপ্রিয় এনকোডিং পদ্ধতি — বেসিক থেকে অ্যাডভান্সড পর্যন্ত — কোডসহ দেওয়া হলো।</div>
+
+  <div class="block">
+    <h4 class="subsub">Label Encoding</h4>
+    <p>প্রতিটি ক্যাটাগরিকে একটি ইউনিক ইন্টিজার দেওয়া হয়। ক্রম (order) থাকলে উপযুক্ত, নাহলে মডেল ভুলভাবে ক্রম অনুমান করতে পারে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.preprocessing import LabelEncoder
+
+le = LabelEncoder()
+df['encoded'] = le.fit_transform(df['category'])</code></pre></div>
+
+    <h4 class="subsub">One-Hot Encoding (OHE)</h4>
+    <p>প্রতিটি ক্যাটাগরির জন্য আলাদা বাইনারি কলাম তৈরি হয়। কোনো ক্রম চাপিয়ে দেয় না, কিন্তু ক্যাটাগরি বেশি হলে ডাইমেনশন দ্রুত বাড়ে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># Pandas দিয়ে
+df = pd.get_dummies(df, columns=['category'], drop_first=True)
+
+# scikit-learn দিয়ে (test সেটে নতুন ক্যাটাগরি এলে handle_unknown='ignore' জরুরি)
+from sklearn.preprocessing import OneHotEncoder
+
+ohe = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+encoded = ohe.fit_transform(df[['category']])
+df_encoded = pd.DataFrame(encoded, columns=ohe.get_feature_names_out(['category']))</code></pre></div>
+
+    <h4 class="subsub">Ordinal Encoding</h4>
+    <p>নির্দিষ্ট ক্রম অনুযায়ী (যেমন Low &lt; Medium &lt; High) সংখ্যা বরাদ্দ করা হয় — ক্রমসূচক ডেটার জন্য উপযুক্ত।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.preprocessing import OrdinalEncoder
+
+oe = OrdinalEncoder(categories=[['Low', 'Medium', 'High']])
+df['encoded'] = oe.fit_transform(df[['size']])</code></pre></div>
+
+    <h4 class="subsub">Target Encoding (স্মুথিং সহ)</h4>
+    <p>টার্গেটের গড় দিয়ে ক্যাটাগরি প্রতিস্থাপন করা হয় — অনেক ক্যাটাগরি থাকলে কার্যকর, কিন্তু <strong>ডেটা লিকেজের</strong> ঝুঁকি থাকে বলে স্মুথিং প্রয়োগ করা উচিত।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># সরাসরি groupby (সরল, কিন্তু লিকেজ-প্রবণ)
+target_mean = df.groupby('category')['target'].mean()
+df['encoded'] = df['category'].map(target_mean)
+
+# Smoothing সহ (ডেটা লিকেজ এড়াতে প্রস্তাবিত)
+global_mean = df['target'].mean()
+stats_tbl = df.groupby('category')['target'].agg(['mean', 'count'])
+smoothing = 1
+stats_tbl['smoothed'] = (stats_tbl['mean'] * stats_tbl['count'] + global_mean * smoothing) / (stats_tbl['count'] + smoothing)
+df['encoded'] = df['category'].map(stats_tbl['smoothed'])</code></pre></div>
+
+    <h4 class="subsub">Frequency / Count Encoding</h4>
+    <p>ক্যাটাগরির ফ্রিকোয়েন্সি (কতবার এসেছে) দিয়ে প্রতিস্থাপন করা হয় — মেমরি-সাশ্রয়ী এবং দ্রুত সমাধান।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">freq = df['category'].value_counts()
+df['encoded'] = df['category'].map(freq)
+
+# একই পদ্ধতি — Count Encoding নামেও পরিচিত
+count_map = df['category'].value_counts().to_dict()
+df['category_count'] = df['category'].map(count_map)</code></pre></div>
+
+    <details class="accordion">
+      <summary>অ্যাডভান্সড এনকোডিং: Weight of Evidence (WoE) ও Hashing Encoding <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <div class="acc-body">
+        <h4 class="subsub">Weight of Evidence (WoE) — শুধুমাত্র বাইনারি টার্গেটের জন্য</h4>
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">def woe_encoding(df, feature, target):
+    grouped = df.groupby(feature)[target].agg(['count', 'sum'])
+    grouped['event_rate'] = grouped['sum'] / grouped['sum'].sum()
+    grouped['non_event_rate'] = (grouped['count'] - grouped['sum']) / (grouped['count'].sum() - grouped['sum'].sum())
+    grouped['woe'] = np.log(grouped['event_rate'] / grouped['non_event_rate'])
+    return df[feature].map(grouped['woe'])
+
+df['category_woe'] = woe_encoding(df, 'category', 'target')</code></pre></div>
+        <h4 class="subsub">Hashing Encoding — বিশাল সংখ্যক ক্যাটাগরির জন্য</h4>
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.feature_extraction import FeatureHasher
+
+h = FeatureHasher(n_features=5, input_type='string')
+hashed = h.transform(df[['category']].astype(str).values)
+df_hashed = pd.DataFrame(hashed.toarray(), columns=[f'hash_{i}' for i in range(5)])</code></pre></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">এনকোডিং পদ্ধতির তুলনামূলক টেবিল</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>পদ্ধতি</th><th>বর্ণনা</th><th>কখন ব্যবহার করবেন</th><th>সুবিধা</th><th>অসুবিধা</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Label Encoding</strong></td><td>প্রতিটি ক্যাটাগরিকে ইউনিক ইন্টিজার</td><td>ক্যাটাগরিতে ক্রম থাকলে (ordinal)</td><td><span class="badge badge-good">সহজ, দ্রুত</span></td><td><span class="badge badge-bad">ক্রম না থাকলে ভুল ফলাফল</span></td></tr>
+        <tr><td><strong>One-Hot Encoding</strong></td><td>প্রতিটি ক্যাটাগরির জন্য আলাদা কলাম</td><td>ক্রম নেই, ক্যাটাগরি সংখ্যা কম</td><td><span class="badge badge-good">কোনো ক্রম তৈরি করে না</span></td><td><span class="badge badge-bad">অনেক ক্যাটাগরিতে মেমরি বেশি</span></td></tr>
+        <tr><td><strong>Ordinal Encoding</strong></td><td>নির্দিষ্ট ক্রম অনুযায়ী সংখ্যা</td><td>ক্রম থাকা ডেটা (Low/Medium/High)</td><td><span class="badge badge-good">ক্রম ধরে রাখে</span></td><td><span class="badge badge-bad">ক্রম ভুল হলে সমস্যা</span></td></tr>
+        <tr><td><strong>Target Encoding</strong></td><td>টার্গেটের গড় দিয়ে প্রতিস্থাপন</td><td>অনেক ক্যাটাগরি, টার্গেটের সাথে সম্পর্ক আছে</td><td><span class="badge badge-good">ক্যাটাগরি সংখ্যা কমায়</span></td><td><span class="badge badge-bad">ডেটা লিকেজের ঝুঁকি</span></td></tr>
+        <tr><td><strong>Frequency Encoding</strong></td><td>ফ্রিকোয়েন্সি দিয়ে প্রতিস্থাপন</td><td>অনেক ক্যাটাগরি, দ্রুত সমাধান চাইলে</td><td><span class="badge badge-good">মেমরি কম লাগে</span></td><td><span class="badge badge-bad">টার্গেটের সাথে সম্পর্ক নাও থাকতে পারে</span></td></tr>
+        <tr><td><strong>WoE / Hashing</strong></td><td>ইভেন্ট-রেট লগ-রেশিও / হ্যাশ-ভিত্তিক</td><td>বাইনারি ক্লাসিফিকেশন (WoE), বিশাল ক্যাটাগরি (Hashing)</td><td><span class="badge badge-good">স্কেলেবল</span></td><td><span class="badge badge-bad">ব্যাখ্যা করা কঠিন</span></td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="callout callout-tip">
+    <i class="fa-solid fa-lightbulb callout-ic"></i>
+    <div><span class="callout-title">দ্রুত সিদ্ধান্ত গাইড</span><p>ট্রি-বেসড মডেল (Random Forest, XGBoost) সাধারণত Label বা Ordinal Encoding দিয়ে ভালো কাজ করে। লিনিয়ার মডেল বা নিউরাল নেটওয়ার্কের জন্য One-Hot Encoding নিরাপদ পছন্দ, যদি না ক্যাটাগরি সংখ্যা অনেক বেশি হয় — সেক্ষেত্রে Target/Frequency/Hashing Encoding বিবেচনা করুন।</p></div>
+  </div>
+</section>
+<section class="chapter" id="ch-feature">
+  <div class="chapter-head"><span class="chno">০৭</span><h2>ফিচার ইঞ্জিনিয়ারিং ও স্কেলিং</h2></div>
+  <div class="lede">নতুন, আরও তথ্যবহুল ফিচার তৈরি করা এবং ফিচারগুলোকে একই স্কেলে আনা — উভয়ই মডেলের পারফরম্যান্স উল্লেখযোগ্যভাবে উন্নত করতে পারে, বিশেষত distance-based (KNN, SVM) ও gradient-based (নিউরাল নেটওয়ার্ক, লিনিয়ার রিগ্রেশন) মডেলে।</div>
+
+  <div class="block">
+    <h3 class="sub">ইউনিফাইড ফিচার ক্রিয়েশন ফাংশন</h3>
+    <p>পলিনোমিয়াল, ইন্টারঅ্যাকশন ও লগ ট্রান্সফরমেশন — তিন ধরনের ফিচার তৈরির জন্য একটি একক ফাংশন।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.preprocessing import PolynomialFeatures
+import numpy as np
+
+def create_features(df, columns, feature_type='poly', degree=2):
+    """
+    DataFrame-এ নতুন ফিচার তৈরি করে (polynomial, interaction, অথবা log transformation)।
+
+    feature_type: 'poly', 'interaction', অথবা 'log'
+    """
+    df_copy = df.copy()
+
+    if feature_type == 'poly':
+        poly = PolynomialFeatures(degree=degree, include_bias=False)
+        poly_features = poly.fit_transform(df_copy[columns])
+        poly_columns = poly.get_feature_names_out(columns)
+        df_poly = pd.DataFrame(poly_features, columns=poly_columns, index=df_copy.index)
+        df_copy = pd.concat([df_copy, df_poly], axis=1)
+
+    elif feature_type == 'interaction':
+        for i, col1 in enumerate(columns):
+            for col2 in columns[i+1:]:
+                df_copy[f"{col1}_{col2}_interaction"] = df_copy[col1] * df_copy[col2]
+
+    elif feature_type == 'log':
+        for col in columns:
+            if (df_copy[col] <= 0).any():
+                print(f"Skipping log for {col}: Contains non-positive values.")
+                continue
+            df_copy[f"{col}_log"] = np.log(df_copy[col])
+
+    else:
+        raise ValueError(f"Invalid feature_type: '{feature_type}'. Choose 'poly', 'interaction', or 'log'.")
+
+    return df_copy
+
+# ব্যবহার:
+# df_new = create_features(train_df, ['OpenPorchSF', 'GrLivArea'], feature_type='poly', degree=2)</code></pre></div>
+
+    <details class="accordion">
+      <summary>কীভাবে কাজ করে — ধাপে ধাপে ব্যাখ্যা (উদাহরণসহ) <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <div class="acc-body">
+        <p>ধরুন <code class="inline">features = ['OpenPorchSF', 'SalePrice']</code>, এবং <code class="inline">degree=2</code>। তাহলে নতুন কলাম তৈরি হবে: <code class="inline">OpenPorchSF</code>, <code class="inline">SalePrice</code>, <code class="inline">OpenPorchSF^2</code>, <code class="inline">SalePrice^2</code>, <code class="inline">OpenPorchSF*SalePrice</code>।</p>
+        <p>উদাহরণস্বরূপ, <code class="inline">OpenPorchSF = 100</code> এবং <code class="inline">SalePrice = 200000</code> হলে: <code class="inline">OpenPorchSF^2 = 10000</code>, <code class="inline">SalePrice^2 = 4×10¹⁰</code>, <code class="inline">OpenPorchSF × SalePrice = 2×10⁷</code>। এই নতুন ফিচারগুলো ডেটাসেটে যোগ হয়ে মডেলের ইনপুট হিসেবে ব্যবহৃত হয়, যা লিনিয়ার মডেলকে অ-লিনিয়ার সম্পর্ক ধরতে সাহায্য করে।</p>
+        <p><strong>কখন ব্যবহার করবেন:</strong> ফিচার ও টার্গেটের মধ্যে নন-লিনিয়ার সম্পর্ক থাকলে, বা লিনিয়ার রিগ্রেশনের মতো মডেলে পারফরম্যান্স উন্নত করতে (যেমন Kaggle প্রতিযোগিতায় RMSLE কমাতে)।</p>
+      </div>
+    </details>
+
+    <div class="callout callout-warning">
+      <i class="fa-solid fa-triangle-exclamation callout-ic"></i>
+      <div><span class="callout-title">সতর্কতা</span>
+      <p><strong>ওভারফিটিং:</strong> উচ্চ ডিগ্রি (৩ বা তার বেশি) ব্যবহার করলে মডেল ওভারফিট করতে পারে। <strong>ফিচার সংখ্যা বৃদ্ধি:</strong> ডিগ্রি বাড়ালে ফিচার সংখ্যা দ্রুত বাড়ে, কম্পিউটেশনাল খরচ বাড়ায়। <strong>স্কেলিং:</strong> পলিনোমিয়াল ফিচার তৈরির পর সাধারণত স্ট্যান্ডার্ডাইজেশন (যেমন <code class="inline">StandardScaler</code>) প্রয়োজন হয়, কারণ উচ্চ-ঘাতের ফিচারের মান দ্রুত অনেক বড় হয়ে যায়।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">স্কেলিং (Feature Scaling)</h3>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.preprocessing import StandardScaler, MinMaxScaler
+
+scaler = StandardScaler()  # গড় 0, স্ট্যান্ডার্ড ডেভিয়েশন 1 — অধিকাংশ ক্ষেত্রে ডিফল্ট পছন্দ
+# scaler = MinMaxScaler()  # 0 থেকে 1 রেঞ্জে — নিউরাল নেটওয়ার্কে জনপ্রিয়
+
+df_scaled = scaler.fit_transform(df[numeric_cols])</code></pre></div>
+    <div class="grid-cards">
+      <div class="card"><span class="tag">StandardScaler</span><h4><i class="fa-solid fa-chart-bar"></i> Z-স্কোর নরমালাইজেশন</h4><p>গড়=0, std=1 করে। আউটলাইয়ারের প্রতি তুলনামূলক কম সংবেদনশীল। লিনিয়ার রিগ্রেশন, SVM, PCA-তে প্রস্তাবিত।</p></div>
+      <div class="card"><span class="tag">MinMaxScaler</span><h4><i class="fa-solid fa-arrows-left-right"></i> রেঞ্জ স্কেলিং</h4><p>নির্দিষ্ট রেঞ্জে (সাধারণত 0-1) মান আনে। নিউরাল নেটওয়ার্ক ও ইমেজ ডেটাতে বেশি ব্যবহৃত হয়, তবে আউটলাইয়ারে সংবেদনশীল।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">লগ ট্রান্সফরমেশন</h3>
+    <p>ডানদিকে-স্কিউড (right-skewed) ডেটাকে (যেমন প্রাইস, ইনকাম) আরও নরমাল ডিস্ট্রিবিউশনে আনতে লগ ট্রান্সফরমেশন কার্যকর।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import numpy as np
+
+df['price_log'] = np.log1p(df['price'])  # log(1 + x) — শূন্য মান হ্যান্ডেল করতে নিরাপদ
+
+# রিভার্ট করতে (মূল স্কেলে ফিরিয়ে আনতে):
+df['price_original'] = np.expm1(df['price_log'])</code></pre></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">টাইম সিরিজ ফিচার ইঞ্জিনিয়ারিং</h3>
+    <p>ডেটাসেটে তারিখ (date) কলাম থাকলে সেখান থেকে একাধিক ব্যবহারযোগ্য ফিচার বের করা যায়:</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">df['date'] = pd.to_datetime(df['date'])
+df['year'] = df['date'].dt.year
+df['month'] = df['date'].dt.month
+df['day'] = df['date'].dt.day
+df['dayofweek'] = df['date'].dt.dayofweek
+df['quarter'] = df['date'].dt.quarter
+df['is_weekend'] = (df['dayofweek'] >= 5).astype(int)</code></pre></div>
+  </div>
+</section>
+<section class="chapter" id="ch-vectorization">
+  <div class="chapter-head"><span class="chno">০৮</span><h2>টেক্সট ভেক্টরাইজেশন (NLP ও Data Representation)</h2></div>
+  <div class="lede">টেক্সট ডেটাকে মেশিন লার্নিং মডেলের জন্য উপযোগী সংখ্যাসূচক ফর্মে রূপান্তর করা GenAI ও NLP-এর একটি বেসিক কিন্তু অত্যন্ত গুরুত্বপূর্ণ ধাপ। এই অধ্যায়ে সহজ কনসেপ্ট (One-Hot Encoding) থেকে শুরু করে ধাপে ধাপে অ্যাডভান্সড এম্বেডিং (Word2Vec) পর্যন্ত আলোচনা করা হয়েছে।</div>
+
+  <div class="block">
+    <h3 class="sub">লার্নিং রোডম্যাপ</h3>
+    <div class="flow-vert">
+      <div class="flow-step" data-i="১"><div class="ft">বেসিক ক্যাটাগরিক্যাল রিপ্রেজেন্টেশন</div><div>One-Hot Encoding দিয়ে শুরু</div></div>
+      <div class="flow-step" data-i="২"><div class="ft">টেক্সটের সিম্পল কাউন্ট-ভিত্তিক ভেক্টর</div><div>Bag of Words (BoW)</div></div>
+      <div class="flow-step" data-i="৩"><div class="ft">কনটেক্সট যোগ করা</div><div>N-gram (uni/bi/tri-gram)</div></div>
+      <div class="flow-step" data-i="৪"><div class="ft">ওয়েটিং সিস্টেম</div><div>TF-IDF</div></div>
+      <div class="flow-step" data-i="৫"><div class="ft">অ্যাডভান্সড এম্বেডিং</div><div>Word2Vec — সেম্যান্টিক সিমিলারিটি</div></div>
+    </div>
+    <p>উদাহরণের জন্য একটি ছোট বাংলা টেক্সট ডেটাসেট ব্যবহার করা হয়েছে:</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">texts = [
+    "আমি ভালোবাসি ভাত খেতে।",
+    "কম্পিউটারে গেম খেলা মজা।",
+    "ভ্রমণ করতে ভালো লাগে।",
+    "ফুটবল খেলা দেখি প্রতিদিন।",
+    "আইসক্রিম খেতে চাই।",
+    "মোবাইল ফোন নতুন কিনেছি।",
+    "বই পড়া আমার অভ্যাস।",
+    "সাইকেল চালিয়ে ঘুরি।",
+    "কফি পান করি সকালে।",
+    "টেলিভিশন দেখা হয় না।",
+    "ফল খাওয়া স্বাস্থ্যকর।",
+    "ল্যাপটপে কাজ করি।"
+]
+
+categories = ['খেলা', 'খাবার', 'ভ্রমণ', 'প্রযুক্তি', 'খেলা']</code></pre></div>
+  </div>
+
+  <details class="accordion">
+    <summary>১. One-Hot Encoding (OHE) <i class="fa-solid fa-chevron-down chev"></i></summary>
+    <div class="acc-body">
+      <p><strong>ধারণা:</strong> OHE একটি ক্যাটেগরিক্যাল ভ্যারিয়েবলকে বাইনারি ভেক্টরে রূপান্তর করে, যেখানে প্রতিটি ক্যাটাগরি একটি কলাম এবং শুধুমাত্র ম্যাচিং পজিশনে 1 থাকে, বাকি সব 0। টেক্সট টোকেন লেভেলে এটি প্রতিটি শব্দকে আলাদা ফিচারে পরিণত করে।</p>
+      <p><strong>কখন ব্যবহার করবেন:</strong> ক্যাটেগরিক্যাল ফিচারের জন্য (যেমন লেবেল ক্লাসিফিকেশন), অথবা টেক্সটে ক্যারেক্টার/টোকেন লেভেলে সিম্পল মডেলে।</p>
+      <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
+
+# ক্যাটেগরিক্যাল OHE
+cat_df = pd.DataFrame({'category': ['খেলা', 'খাবার', 'ভ্রমণ', 'প্রযুক্তি', 'খেলা']})
+enc = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
+ohe_cat = enc.fit_transform(cat_df)
+
+print("OHE shape:", ohe_cat.shape)                     # (5, 4) — ৫টা রো, ৪টা ইউনিক ক্যাটাগরি
+print("Feature names:", enc.get_feature_names_out())   # ['category_খাবার' 'category_খেলা' ...]
+
+# টোকেন-লেভেল OHE
+sentence = "আমি ভালোবাসি ভাত খেতে"
+tokens = sentence.split()
+token_df = pd.DataFrame({'token': tokens})
+ohe_token = enc.fit_transform(token_df)
+print("Token OHE shape:", ohe_token.shape)  # (4, 4) — প্রতিটি শব্দ নিজস্ব কলাম পায়</code></pre></div>
+      <p><strong>সুবিধা:</strong> সহজ, কোনো ক্রম ধরে না। <strong>অসুবিধা:</strong> হাই ডাইমেনশনালিটি (অনেক ক্যাটাগরি থাকলে), স্পার্সিটি, unseen ক্যাটাগরি হ্যান্ডেল করে না (যদি ignore সেট না করা হয়)।</p>
+      <div class="callout callout-tip"><i class="fa-solid fa-lightbulb callout-ic"></i><div><span class="callout-title">টিপ</span><p>টেস্ট ডেটায় সবসময় <code class="inline">handle_unknown='ignore'</code> ব্যবহার করুন। বাংলা টোকেনাইজেশনে সতর্কতা: scikit-learn-এর ডিফল্ট টোকেনাইজার বাংলা শব্দ সবসময় ভালোভাবে হ্যান্ডেল করে না, তাই প্রয়োজনে কাস্টম টোকেনাইজার ব্যবহার করুন।</p></div></div>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>২. Bag of Words (BoW) <i class="fa-solid fa-chevron-down chev"></i></summary>
+    <div class="acc-body">
+      <p><strong>ধারণা:</strong> BoW টেক্সটকে শব্দ গণনা (word count) দিয়ে রিপ্রেজেন্ট করে, যেখানে প্রতিটি ডকুমেন্ট একটি ভেক্টর এবং ভোকাবুলারি থেকে শব্দের ফ্রিকোয়েন্সি রাখা হয় — এটি একটি স্পার্স ম্যাট্রিক্স তৈরি করে।</p>
+      <p><strong>কখন ব্যবহার করবেন:</strong> সিম্পল টেক্সট ক্লাসিফিকেশন বা ক্লাস্টারিংয়ে, যেখানে শব্দের উপস্থিতি গুরুত্বপূর্ণ।</p>
+      <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.feature_extraction.text import CountVectorizer
+
+vectorizer = CountVectorizer()
+X_bow = vectorizer.fit_transform(texts)
+
+print("BoW shape:", X_bow.shape)  # (12, 24) — ১২টা ডকুমেন্ট, ২৪টা ইউনিক শব্দ
+print("Feature names:", list(vectorizer.vocabulary_.keys())[:10])
+print("First row vector:", X_bow[0].toarray().flatten()[:10])</code></pre></div>
+      <p><strong>সুবিধা:</strong> সহজ, দ্রুত। <strong>অসুবিধা:</strong> stopwords (যেমন 'আমি') ইগনোর না করলে নয়েজ তৈরি হয়, casing/punctuation ইস্যু, out-of-vocabulary (OOV) শব্দ, ডোমেইন শিফট সমস্যা, এবং শব্দের কনটেক্সট (order) সংরক্ষণ করে না।</p>
+      <div class="callout callout-tip"><i class="fa-solid fa-lightbulb callout-ic"></i><div><span class="callout-title">টিপ</span><p>বাংলায় stopwords (যেমন 'আমি', 'এ') কাস্টম লিস্ট দিয়ে হ্যান্ডেল করুন। কেস সেন্সিটিভিটি দরকার হলে <code class="inline">lowercase=False</code> সেট করুন।</p></div></div>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>৩. N-gram (uni/bi/tri-gram) <i class="fa-solid fa-chevron-down chev"></i></summary>
+    <div class="acc-body">
+      <p><strong>ধারণা:</strong> N-gram হলো শব্দের সিকোয়েন্স — uni-gram (একটি শব্দ), bi-gram (দুটি), tri-gram (তিনটি)। এটি BoW-এর উপর কনটেক্সট যোগ করে।</p>
+      <p><strong>কখন ব্যবহার করবেন:</strong> যখন শব্দের ক্রম গুরুত্বপূর্ণ, যেমন সেন্টিমেন্ট অ্যানালাইসিসে।</p>
+      <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">ngram_vectorizer = CountVectorizer(ngram_range=(1, 2))
+X_ngram = ngram_vectorizer.fit_transform(texts)
+print("N-gram shape:", X_ngram.shape)  # (12, 38) — ডাইমেনশন বেড়েছে
+
+# টপ ১০ ফিচার
+import numpy as np
+feature_sums = np.sum(X_ngram.toarray(), axis=0)
+top_indices = np.argsort(feature_sums)[::-1][:10]
+top_features = [list(ngram_vectorizer.get_feature_names_out())[i] for i in top_indices]
+print("Top 10 n-grams:", top_features)</code></pre></div>
+      <p><strong>সুবিধা:</strong> কনটেক্সট ক্যাপচার করে। <strong>অসুবিধা:</strong> হাই ডাইমেনশনালিটি বনাম কনটেক্সট ট্রেড-অফ, স্পার্সিটি, রেয়ার n-gram ওভারফিটিং ঘটাতে পারে।</p>
+      <div class="callout callout-tip"><i class="fa-solid fa-lightbulb callout-ic"></i><div><span class="callout-title">টিপ</span><p>সাধারণত n=1-2 দিয়ে শুরু করুন — বড় n মেমরি খরচ অনেক বাড়িয়ে দেয়।</p></div></div>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>৪. TF-IDF (Term Frequency – Inverse Document Frequency) <i class="fa-solid fa-chevron-down chev"></i></summary>
+    <div class="acc-body">
+      <p><strong>ধারণা:</strong> TF হলো ডকুমেন্টে শব্দের ফ্রিকোয়েন্সি, IDF হলো <code class="inline">log(N / (1+df))</code> — যেখানে N মোট ডকুমেন্ট সংখ্যা, df শব্দের ডকুমেন্ট ফ্রিকোয়েন্সি। এটি রেয়ার শব্দকে বেশি ওয়েট দেয়। সূত্র: <code class="inline">TF-IDF = TF × log(N / (1 + df))</code>।</p>
+      <p><strong>কখন ব্যবহার করবেন:</strong> যখন কমন শব্দ ইগনোর করতে চান, যেমন সার্চ ইঞ্জিনে। ডকুমেন্ট লম্বা হলে বা কমন শব্দ বেশি থাকলে সাধারণত TF-IDF, BoW-এর চেয়ে ভালো ফলাফল দেয়।</p>
+      <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.feature_extraction.text import TfidfVectorizer
+
+tfidf_vectorizer = TfidfVectorizer()
+X_tfidf = tfidf_vectorizer.fit_transform(texts)
+
+print("TF-IDF shape:", X_tfidf.shape)  # (12, 24) — BoW-এর মতো shape, কিন্তু কাউন্ট নয়, ওয়েট
+print("First row snippet:", X_tfidf[0].toarray().flatten()[:10])</code></pre></div>
+      <p><strong>সুবিধা:</strong> কমন শব্দকে ডাউনওয়েট করে। <strong>অসুবিধা:</strong> ক্যালকুলেশন তুলনামূলক costly, ছোট কর্পাসে IDF অস্থির হতে পারে।</p>
+      <div class="callout callout-tip"><i class="fa-solid fa-lightbulb callout-ic"></i><div><span class="callout-title">টিপ</span><p>হাইপারপ্যারামিটার টিউন করুন: <code class="inline">min_df=2</code>, <code class="inline">max_df=0.8</code>, <code class="inline">ngram_range=(1,2)</code>, <code class="inline">sublinear_tf=True</code>, <code class="inline">norm='l2'</code>।</p></div></div>
+    </div>
+  </details>
+
+  <details class="accordion">
+    <summary>৫. Word2Vec — ডেন্স এম্বেডিং <i class="fa-solid fa-chevron-down chev"></i></summary>
+    <div class="acc-body">
+      <p><strong>ধারণা:</strong> Word2Vec distributional semantics-ভিত্তিক, যা শব্দকে কনটিনিউয়াস (dense) ভেক্টরে রূপান্তর করে, যাতে সিমিলার শব্দগুলো ভেক্টর স্পেসে কাছাকাছি অবস্থান করে।</p>
+      <p><strong>কখন ব্যবহার করবেন:</strong> সেম্যান্টিক টাস্কে, যেমন ওয়ার্ড সিমিলারিটি বা ডাউনস্ট্রিম ডিপ লার্নিং মডেলে ইনপুট হিসেবে।</p>
+      <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from gensim.models import Word2Vec
+
+tokenized_texts = [text.split() for text in texts]
+model = Word2Vec(sentences=tokenized_texts, vector_size=10, window=5,
+                  min_count=1, sg=0, seed=42, epochs=5)
+
+print("Word2Vec vector for 'খেলা':", model.wv['খেলা'][:5])
+similar = model.wv.most_similar('খেলা', topn=3)
+print("Most similar to 'খেলা':", similar)</code></pre></div>
+      <p><strong>সুবিধা:</strong> সেম্যান্টিক সিমিলারিটি ক্যাপচার করে। <strong>অসুবিধা:</strong> ছোট কর্পাসে খারাপ পারফর্ম করে, OOV সমস্যা, র‍্যান্ডমনেস (তাই <code class="inline">seed</code> সেট করা জরুরি)।</p>
+      <div class="callout callout-tip"><i class="fa-solid fa-lightbulb callout-ic"></i><div><span class="callout-title">টিপ</span><p>যতটা সম্ভব বড় কর্পাস ব্যবহার করুন এবং রেয়ার শব্দের জন্য <code class="inline">sg=1</code> (Skip-gram) ট্রাই করুন — এটি CBOW-এর (sg=0) তুলনায় রেয়ার শব্দে ভালো পারফর্ম করে।</p></div></div>
+    </div>
+  </details>
+
+  <div class="block">
+    <h3 class="sub">তুলনা টেবিল</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>টেকনিক</th><th>রিপ্রেজেন্টেশন টাইপ</th><th>সুবিধা</th><th>অসুবিধা</th><th>বেস্ট ইউজ-কেস</th><th>ডাইমেনশনালিটি</th><th>OOV হ্যান্ডলিং</th></tr></thead>
+      <tbody>
+        <tr><td><strong>OHE</strong></td><td>Sparse binary</td><td>সহজ, কোনো অর্ডার না</td><td>হাই ডাইমেনশন, স্পার্স</td><td>ক্যাটেগরিক্যাল ক্লাসিফিকেশন</td><td>হাই (ক্যাটাগরি সংখ্যা)</td><td>Ignore অপশন</td></tr>
+        <tr><td><strong>BoW</strong></td><td>Sparse count</td><td>দ্রুত, সিম্পল</td><td>কনটেক্সট নেই, stopwords নয়েজ</td><td>বেসিক টেক্সট ক্লাসিফিকেশন</td><td>মধ্যম (ভোকাব সাইজ)</td><td>নতুন শব্দ ইগনোর হয়</td></tr>
+        <tr><td><strong>N-gram</strong></td><td>Sparse count</td><td>কনটেক্সট যোগ করে</td><td>হাই ডাইমেনশন, স্পার্স</td><td>সেন্টিমেন্ট, এনগ্রাম-ভিত্তিক টাস্ক</td><td>হাই (n বড় হলে)</td><td>BoW-এর মতো</td></tr>
+        <tr><td><strong>TF-IDF</strong></td><td>Sparse weighted</td><td>কমন শব্দ ডাউনওয়েট</td><td>কম্পিউট কস্ট</td><td>সার্চ, ক্লাস্টারিং</td><td>মধ্যম</td><td>BoW-এর মতো</td></tr>
+        <tr><td><strong>Word2Vec</strong></td><td>Dense continuous</td><td>সেম্যান্টিক সিমিলারিটি</td><td>ট্রেনিং কস্ট, ছোট কর্পাসে খারাপ</td><td>এম্বেডিং-ভিত্তিক টাস্ক</td><td>লো (vector_size)</td><td>নতুন শব্দ থাকলে নেই</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="grid-cards">
+    <div class="card"><span class="tag">চেকলিস্ট</span><h4><i class="fa-solid fa-list-check"></i> কোন পদ্ধতি বাছবেন?</h4>
+      <p>✅ ক্যাটেগরিক্যাল ডেটা → OHE<br>✅ সিম্পল কাউন্ট দরকার → BoW<br>✅ কনটেক্সট চান → N-gram<br>✅ কমন শব্দ ইগনোর করতে → TF-IDF<br>✅ সেম্যান্টিক সিমিলারিটি দরকার → Word2Vec</p>
+    </div>
+    <div class="card"><span class="tag">সাধারণ পিটফল</span><h4><i class="fa-solid fa-bug"></i> এড়িয়ে চলুন</h4>
+      <p>বাংলা টোকেনাইজেশন ইস্যু, হাই-ডাইমেনশন স্পার্স ম্যাট্রিক্স, বড় n-gram-এ ওভারফিটিং, OOV ও ডোমেইন শিফট, উচ্চ মেমরি/কম্পিউট কস্ট।</p>
+    </div>
+  </div>
+
+  <details class="accordion">
+    <summary>৫টি অনুশীলনী (Exercises) <i class="fa-solid fa-chevron-down chev"></i></summary>
+    <div class="acc-body">
+      <ol style="color:var(--ink-soft);padding-left:20px;">
+        <li>Stopwords চালু/বন্ধ করে BoW-এর shape ও স্কোর তুলনা করুন (কাস্টম <code class="inline">stopwords=['আমি','এ']</code> দিয়ে)।</li>
+        <li>N-gram range <code class="inline">(1,1)</code> vs <code class="inline">(1,3)</code> বদলে টপ ১০ ফিচার দেখুন।</li>
+        <li>TF-IDF-এ <code class="inline">min_df=2</code>, <code class="inline">max_df=0.5</code> টিউন করে ফিচার ওয়েট তুলনা করুন।</li>
+        <li>Word2Vec-এ <code class="inline">window=3</code> vs <code class="inline">7</code> বদলে 'খেলা'-এর <code class="inline">most_similar</code> তুলনা করুন।</li>
+        <li>OHE-এ unseen ভ্যালু টেস্ট করুন (নতুন ক্যাটাগরি যোগ করে <code class="inline">handle_unknown</code>-এর আচরণ দেখুন)।</li>
+      </ol>
+    </div>
+  </details>
+</section>
+<section class="chapter" id="ch-split">
+  <div class="chapter-head"><span class="chno">০৯</span><h2>ট্রেন-টেস্ট স্প্লিট স্ট্র্যাটেজি</h2></div>
+  <div class="lede">সঠিক স্প্লিটিং স্ট্র্যাটেজি বেছে না নিলে মডেল ইভালুয়েশন বিভ্রান্তিকর (misleading) হতে পারে — বিশেষত ইমব্যালেন্সড, টাইম-সিরিজ বা গ্রুপড ডেটায়।</div>
+
+  <div class="block">
+    <h4 class="subsub">সাধারণ স্প্লিট (Random)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.model_selection import train_test_split
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, shuffle=True
+)</code></pre></div>
+
+    <h4 class="subsub">স্ট্র্যাটিফাইড স্প্লিট (ক্লাসিফিকেশনের জন্য)</h4>
+    <p>ক্লাসের অনুপাত ঠিক রাখতে — ইমব্যালেন্সড ডেটার জন্য অত্যন্ত গুরুত্বপূর্ণ।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)</code></pre></div>
+
+    <h4 class="subsub">টাইম সিরিজ স্প্লিট (শাফল ছাড়া)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># ধরি ডেটা তারিখ অনুসারে সাজানো আছে
+train_size = int(0.8 * len(df))
+X_train, X_test = X[:train_size], X[train_size:]
+y_train, y_test = y[:train_size], y[train_size:]</code></pre></div>
+
+    <h4 class="subsub">গ্রুপ-ভিত্তিক স্প্লিট (GroupKFold)</h4>
+    <p>একই গ্রুপের ডেটা ট্রেন ও টেস্টে একসাথে না পড়ার জন্য (যেমন একই রোগীর একাধিক রেকর্ড) — ডেটা লিকেজ প্রতিরোধ করে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.model_selection import GroupKFold
+
+gkf = GroupKFold(n_splits=5)
+for train_idx, val_idx in gkf.split(X, y, groups=df['patient_id']):
+    X_train, X_val = X.iloc[train_idx], X.iloc[val_idx]
+    y_train, y_val = y.iloc[train_idx], y.iloc[val_idx]</code></pre></div>
+  </div>
+
+  <div class="callout callout-danger">
+    <i class="fa-solid fa-circle-exclamation callout-ic"></i>
+    <div><span class="callout-title">সাধারণ ভুল — ডেটা লিকেজ</span><p>টাইম-সিরিজ ডেটায় র‍্যান্ডম শাফল করে স্প্লিট করলে ভবিষ্যতের তথ্য ট্রেনিং সেটে "লিক" হয়ে যায়, যা বাস্তবে অসম্ভব এবং মডেলের পারফরম্যান্সকে বিভ্রান্তিকরভাবে ভালো দেখায়। একইভাবে, একই গ্রুপের (যেমন রোগী, ব্যবহারকারী) ডেটা ট্রেন ও টেস্ট উভয় জায়গায় থাকলে মডেল আসলে "মুখস্থ" করে ফেলতে পারে।</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="ch-pipeline">
+  <div class="chapter-head"><span class="chno">১০</span><h2>পাইপলাইন ও হাইপারপ্যারামিটার টিউনিং</h2></div>
+  <div class="lede">Pipeline ব্যবহার করে ইম্পিউটেশন, এনকোডিং, স্কেলিং ও মডেলিং-কে একটি একক অবজেক্টে একত্রিত করলে কোড পরিষ্কার থাকে এবং ডেটা লিকেজ প্রতিরোধ হয় (কারণ প্রতিটি ট্রান্সফর্মেশন শুধুমাত্র ট্রেনিং ফোল্ডে ফিট হয়)।</div>
+
+  <div class="block">
+    <h3 class="sub">ColumnTransformer + Pipeline (মাল্টি-স্টেপ উদাহরণ)</h3>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
+from sklearn.feature_selection import SelectKBest, chi2
+from sklearn.tree import DecisionTreeClassifier
+
+# ইম্পিউটেশন, এনকোডিং, স্কেলিং, ফিচার সিলেকশন একত্রে
+trf1 = ColumnTransformer([
+    ('impute_age', SimpleImputer(), [2]),
+    ('impute_embarked', SimpleImputer(strategy='most_frequent'), [6])
+], remainder='passthrough')
+
+trf2 = ColumnTransformer([
+    ('ohe', OneHotEncoder(sparse_output=False, handle_unknown='ignore'), [1, 6])
+], remainder='passthrough')
+
+trf3 = ColumnTransformer([
+    ('scale', MinMaxScaler(), slice(0, 10))
+])
+
+trf4 = SelectKBest(score_func=chi2, k=8)
+trf5 = DecisionTreeClassifier()
+
+pipe = Pipeline([
+    ('trf1', trf1), ('trf2', trf2), ('trf3', trf3),
+    ('trf4', trf4), ('trf5', trf5)
+])
+
+pipe.fit(X_train, y_train)
+y_pred = pipe.predict(X_test)</code></pre></div>
+
+    <h4 class="subsub">পাইপলাইনের একটি সম্পূর্ণ, বাস্তবসম্মত সংস্করণ (নিউমেরিক + ক্যাটেগরিক্যাল)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', StandardScaler())
+])
+
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+preprocessor = ColumnTransformer(transformers=[
+    ('num', numeric_transformer, numeric_features),
+    ('cat', categorical_transformer, categorical_features)
+])
+
+model = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+])</code></pre></div>
+
+    <h4 class="subsub">পাইপলাইনের মাঝামাঝি ডেটা দেখা (ডিবাগিং)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># শেষ ধাপ (মডেল) বাদে পাইপলাইনের একটি নির্দিষ্ট স্টেপ পর্যন্ত ডেটা দেখতে
+X_transformed = pipe[:-1].transform(X_train)
+print(X_transformed.shape)
+
+# ColumnTransformer-এর আউটপুট কলামের নাম জানা (get_feature_names_out() কাজ না করলে)
+def get_ct_feature_names(ct):
+    output_features = []
+    for name, transformer, columns in ct.transformers_:
+        if transformer == 'drop' or transformer is None:
+            continue
+        if hasattr(transformer, 'get_feature_names_out'):
+            names = transformer.get_feature_names_out(columns)
+        else:
+            names = columns
+        output_features.extend(names)
+    return output_features</code></pre></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">হাইপারপ্যারামিটার টিউনিং</h3>
+    <h4 class="subsub">GridSearchCV — সম্পূর্ণ সার্চ</h4>
+    <p>সব কম্বিনেশন এক্সহস্টিভলি (সম্পূর্ণরূপে) যাচাই করে — সঠিক কিন্তু ধীর, তাই ছোট প্যারামিটার স্পেসে ব্যবহার করুন।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.model_selection import GridSearchCV
+
+params = {'trf5__max_depth': [1, 2, 3, 4, 5, None]}
+grid = GridSearchCV(pipe, params, cv=5, scoring='accuracy')
+grid.fit(X_train, y_train)
+print(grid.best_score_, grid.best_params_)</code></pre></div>
+
+    <h4 class="subsub">RandomizedSearchCV — দ্রুত টিউনিং</h4>
+    <p>র‍্যান্ডম স্যাম্পলিং করে সীমিত সংখ্যক কম্বিনেশন পরীক্ষা করে — বড় প্যারামিটার স্পেসে দ্রুত ও কার্যকর।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from scipy.stats import randint, uniform
+from sklearn.model_selection import RandomizedSearchCV
+
+models = {
+    'RandomForest': RandomForestRegressor(),
+    'GradientBoosting': GradientBoostingRegressor(),
+    'XGBoost': XGBRegressor(eval_metric='rmse'),
+}
+params = {
+    'RandomForest': {'n_estimators': randint(50, 200), 'max_depth': randint(5, 20)},
+    'GradientBoosting': {'n_estimators': randint(50, 200), 'learning_rate': uniform(0.01, 0.2)},
+    'XGBoost': {'n_estimators': randint(50, 200), 'learning_rate': uniform(0.01, 0.2)}
+}
+
+best_models = {}
+for name, model in models.items():
+    random_search = RandomizedSearchCV(
+        model, param_distributions=params[name], n_iter=10,
+        cv=5, scoring='neg_mean_squared_error', random_state=42, n_jobs=-1
+    )
+    random_search.fit(X, y)
+    best_models[name] = random_search.best_estimator_
+    print(f"{name} best RMSE: {np.sqrt(-random_search.best_score_)}")</code></pre></div>
+
+    <h4 class="subsub">Optuna — স্মার্ট টিউনিং (অ্যাডভান্সড)</h4>
+    <p>Bayesian optimization ব্যবহার করে বুদ্ধিমত্তার সাথে সবচেয়ে সম্ভাবনাময় হাইপারপ্যারামিটার অঞ্চলে অনুসন্ধান কেন্দ্রীভূত করে — GridSearch/RandomSearch-এর চেয়ে দ্রুত ভালো ফলাফল দিতে পারে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># pip install optuna
+import optuna
+from sklearn.model_selection import cross_val_score
+
+def objective(trial):
+    n_estimators = trial.suggest_int('n_estimators', 50, 300)
+    max_depth = trial.suggest_int('max_depth', 5, 50)
+    min_samples_split = trial.suggest_int('min_samples_split', 2, 20)
+
+    model = RandomForestRegressor(
+        n_estimators=n_estimators, max_depth=max_depth,
+        min_samples_split=min_samples_split, random_state=42
+    )
+    score = cross_val_score(model, X_train, y_train, cv=3,
+                             scoring='neg_root_mean_squared_error').mean()
+    return score
+
+study = optuna.create_study(direction='maximize')
+study.optimize(objective, n_trials=50)
+print("Best trial:", study.best_trial.params)</code></pre></div>
+  </div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>টুল</th><th>স্ট্র্যাটেজি</th><th>গতি</th><th>কখন ব্যবহার করবেন</th></tr></thead>
+    <tbody>
+      <tr><td><strong>GridSearchCV</strong></td><td>Exhaustive (সব কম্বিনেশন)</td><td><span class="badge badge-bad">ধীর</span></td><td>ছোট প্যারামিটার স্পেস, নির্ভুলতা গুরুত্বপূর্ণ হলে</td></tr>
+      <tr><td><strong>RandomizedSearchCV</strong></td><td>Random sampling</td><td><span class="badge badge-neutral">মধ্যম</span></td><td>বড় প্যারামিটার স্পেস, সময় সীমিত হলে</td></tr>
+      <tr><td><strong>Optuna</strong></td><td>Bayesian optimization</td><td><span class="badge badge-good">দ্রুত ও স্মার্ট</span></td><td>জটিল/বড় স্পেসে সেরা ফলাফল দ্রুত পেতে</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="chapter" id="ch-eval">
+  <div class="chapter-head"><span class="chno">১১</span><h2>মডেল ইভালুয়েশন ও ক্রস-ভ্যালিডেশন</h2></div>
+  <div class="lede">সঠিক মেট্রিক নির্বাচন সমস্যার ধরনের উপর নির্ভর করে — রিগ্রেশন ও ক্লাসিফিকেশনের জন্য ভিন্ন মেট্রিক প্রয়োজন। ক্রস-ভ্যালিডেশন একটি single train-test split-এর চেয়ে অনেক বেশি নির্ভরযোগ্য পারফরম্যান্স অনুমান দেয়।</div>
+
+  <div class="grid-cards">
+    <div class="card"><span class="tag">রিগ্রেশন মেট্রিক্স</span><h4><i class="fa-solid fa-ruler"></i> কী ব্যবহার করবেন</h4>
+      <p><code class="inline">MSE</code>: <code class="inline">mean_squared_error(y_true, y_pred)</code><br>
+      <code class="inline">RMSE</code>: <code class="inline">np.sqrt(mean_squared_error(y_true, y_pred))</code><br>
+      <code class="inline">R²</code>: <code class="inline">r2_score(y_true, y_pred)</code></p></div>
+    <div class="card"><span class="tag">ক্লাসিফিকেশন মেট্রিক্স</span><h4><i class="fa-solid fa-check-double"></i> কী ব্যবহার করবেন</h4>
+      <p><code class="inline">Accuracy</code>: <code class="inline">accuracy_score(y_true, y_pred)</code><br>
+      <code class="inline">Confusion Matrix</code>: <code class="inline">confusion_matrix(y_true, y_pred)</code><br>
+      <code class="inline">Report</code>: <code class="inline">classification_report(y_true, y_pred)</code></p></div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">ক্রস-ভ্যালিডেশন</h3>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(pipe, X_train, y_train, cv=5, scoring='accuracy')
+print(scores.mean())</code></pre></div>
+    <div class="callout callout-note">
+      <i class="fa-solid fa-circle-info callout-ic"></i>
+      <div><span class="callout-title">কেন ক্রস-ভ্যালিডেশন গুরুত্বপূর্ণ</span><p>একটিমাত্র ট্রেন-টেস্ট স্প্লিটের ফলাফল "লাকি" বা "আনলাকি" স্প্লিটের কারণে ভ্রান্ত হতে পারে। <code class="inline">cv=5</code> (5-fold) ডেটাকে ৫ ভাগে ভাগ করে প্রতিবার ভিন্ন ভাগ টেস্ট হিসেবে ব্যবহার করে ৫টি স্কোরের গড় নেয়, যা অনেক বেশি নির্ভরযোগ্য একটি অনুমান দেয়। ক্লাসিফিকেশনে ইমব্যালেন্সড ডেটার জন্য <code class="inline">StratifiedKFold</code> ব্যবহার করুন।</p></div>
+    </div>
+  </div>
+</section>
+<section class="chapter" id="ch-interpret">
+  <div class="chapter-head"><span class="chno">১২</span><h2>মডেল ইন্টারপ্রিটেশন (SHAP / LIME)</h2></div>
+  <div class="lede">একটি মডেল কেন একটি নির্দিষ্ট প্রেডিকশন দিল তা ব্যাখ্যা করতে পারা — বিশেষত ফিন্যান্স, হেলথকেয়ার-এর মতো রেগুলেটেড ক্ষেত্রে — গুরুত্বপূর্ণ। এই অধ্যায়ে ফিচার ইম্পরট্যান্স, SHAP ও LIME নিয়ে আলোচনা করা হলো।</div>
+
+  <div class="block">
+    <h4 class="subsub">ফিচার ইম্পরট্যান্স (Tree-based মডেলে)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># Random Forest ট্রেনিংয়ের পরে
+importances = model.feature_importances_
+feature_names = X.columns
+feat_imp = pd.Series(importances, index=feature_names).sort_values(ascending=False)
+
+feat_imp.plot(kind='bar', figsize=(10, 6))
+plt.title("Feature Importances")
+plt.show()</code></pre></div>
+
+    <h4 class="subsub">SHAP (SHapley Additive exPlanations)</h4>
+    <p>প্রতিটি ফিচার প্রেডিকশনে কতটুকু অবদান রেখেছে তা গেম থিওরি-ভিত্তিক পদ্ধতিতে বের করে — স্থানীয় (একটি প্রেডিকশন) এবং গ্লোবাল (পুরো মডেল) উভয় ব্যাখ্যা দেয়।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># pip install shap
+import shap
+
+# TreeExplainer (RandomForest, XGBoost-এর জন্য দ্রুত ও নির্দিষ্ট)
+explainer = shap.TreeExplainer(model)
+shap_values = explainer.shap_values(X_test)
+
+# Summary plot — গ্লোবাল ফিচার ইম্পরট্যান্স
+shap.summary_plot(shap_values, X_test)
+
+# Force plot — একটি নির্দিষ্ট প্রেডিকশনের ব্যাখ্যা
+shap.initjs()
+shap.force_plot(explainer.expected_value, shap_values[0, :], X_test.iloc[0, :])</code></pre></div>
+
+    <h4 class="subsub">LIME (Local Interpretable Model-agnostic Explanations)</h4>
+    <p>যেকোনো ব্ল্যাক-বক্স মডেলের একটি নির্দিষ্ট প্রেডিকশনকে স্থানীয়ভাবে একটি সরল, ব্যাখ্যাযোগ্য মডেল দিয়ে আনুমানিক করে ব্যাখ্যা দেয়।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># pip install lime
+from lime.lime_tabular import LimeTabularExplainer
+
+explainer = LimeTabularExplainer(
+    X_train.values, mode='regression', feature_names=X_train.columns
+)
+exp = explainer.explain_instance(X_test.iloc[0].values, model.predict)
+exp.show_in_notebook()</code></pre></div>
+  </div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>পদ্ধতি</th><th>স্কোপ</th><th>মডেল-নির্ভরতা</th><th>স্পিড</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Feature Importance</strong></td><td>গ্লোবাল</td><td>শুধু tree-based মডেল</td><td><span class="badge badge-good">খুব দ্রুত</span></td></tr>
+      <tr><td><strong>SHAP</strong></td><td>গ্লোবাল + লোকাল</td><td>Model-agnostic (TreeExplainer দ্রুততর)</td><td><span class="badge badge-neutral">মধ্যম</span></td></tr>
+      <tr><td><strong>LIME</strong></td><td>লোকাল (একটি প্রেডিকশন)</td><td>সম্পূর্ণ Model-agnostic</td><td><span class="badge badge-neutral">মধ্যম</span></td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="chapter" id="ch-imbalance">
+  <div class="chapter-head"><span class="chno">১৩</span><h2>ইমব্যালেন্সড ডেটা হ্যান্ডলিং</h2></div>
+  <div class="lede">যখন একটি ক্লাস অন্যটির চেয়ে অনেক বেশি সংখ্যায় থাকে (যেমন জালিয়াতি সনাক্তকরণে ৯৯% নন-ফ্রড, ১% ফ্রড), তখন সাধারণ মডেল সংখ্যাগরিষ্ঠ ক্লাসের দিকে পক্ষপাতদুষ্ট হয়ে পড়ে। নিচে তিনটি সমাধান পদ্ধতি দেওয়া হলো।</div>
+
+  <div class="block">
+    <h4 class="subsub">ক্লাস ওয়েট ব্যবহার (সবচেয়ে সহজ)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">model = RandomForestClassifier(class_weight='balanced')</code></pre></div>
+
+    <h4 class="subsub">SMOTE (Synthetic Minority Over-sampling Technique)</h4>
+    <p>সংখ্যালঘু ক্লাসের বিদ্যমান স্যাম্পলগুলোর মধ্যে ইন্টারপোলেট করে নতুন সিন্থেটিক স্যাম্পল তৈরি করে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from imblearn.over_sampling import SMOTE
+from imblearn.pipeline import make_pipeline as make_pipeline_imb
+
+smote = SMOTE(random_state=42)
+X_resampled, y_resampled = smote.fit_resample(X_train, y_train)
+
+# পাইপলাইনে ব্যবহার (ডেটা লিকেজ এড়াতে imblearn-এর Pipeline ব্যবহার করুন)
+pipeline = make_pipeline_imb(smote, RandomForestClassifier())</code></pre></div>
+
+    <h4 class="subsub">আন্ডার-স্যাম্পলিং (RandomUnderSampler)</h4>
+    <p>সংখ্যাগরিষ্ঠ ক্লাস থেকে র‍্যান্ডমলি স্যাম্পল বাদ দিয়ে ব্যালেন্স করে — বড় ডেটাসেটে দ্রুত কিন্তু তথ্য হারানোর ঝুঁকি থাকে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from imblearn.under_sampling import RandomUnderSampler
+
+rus = RandomUnderSampler(random_state=42)
+X_resampled, y_resampled = rus.fit_resample(X_train, y_train)</code></pre></div>
+  </div>
+
+  <div class="callout callout-warning">
+    <i class="fa-solid fa-triangle-exclamation callout-ic"></i>
+    <div><span class="callout-title">সতর্কতা — লিকেজ এড়ানো</span><p>SMOTE বা যেকোনো রি-স্যাম্পলিং সবসময় শুধুমাত্র ট্রেনিং ফোল্ডে প্রয়োগ করুন — কখনও পুরো ডেটাসেটে (train+test একসাথে) SMOTE প্রয়োগ করে তারপর স্প্লিট করবেন না, কারণ এতে টেস্ট সেটে সিন্থেটিক ডেটা লিক হয়ে যায় এবং ইভালুয়েশন মেট্রিক্স মিথ্যাভাবে উন্নত দেখাবে।</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="ch-persist">
+  <div class="chapter-head"><span class="chno">১৪</span><h2>মডেল সেভ ও লোড</h2></div>
+  <div class="lede">প্রশিক্ষিত মডেল বারবার ট্রেন না করে সংরক্ষণ (serialize) করে রাখলে ডিপ্লয়মেন্ট ও পুনঃব্যবহার সহজ হয়।</div>
+
+  <div class="grid-cards">
+    <div class="card"><span class="tag">Pickle</span><h4><i class="fa-solid fa-box-archive"></i> সাধারণ পাইথন অবজেক্ট</h4>
+      <div class="code-card" style="margin-top:10px;"><pre><code class="language-python">import pickle
+
+# সেভ
+with open('model.pkl', 'wb') as f:
+    pickle.dump(pipe, f)
+
+# লোড
+with open('model.pkl', 'rb') as f:
+    loaded_pipe = pickle.load(f)</code></pre></div></div>
+    <div class="card"><span class="tag">Joblib</span><h4><i class="fa-solid fa-bolt"></i> sklearn মডেলের জন্য দ্রুততর</h4>
+      <div class="code-card" style="margin-top:10px;"><pre><code class="language-python">import joblib
+
+# সেভ
+joblib.dump(pipe, 'model.joblib')
+
+# লোড
+loaded_pipe = joblib.load('model.joblib')</code></pre></div></div>
+  </div>
+  <div class="callout callout-tip">
+    <i class="fa-solid fa-lightbulb callout-ic"></i>
+    <div><span class="callout-title">Pickle বনাম Joblib</span><p>বড় NumPy অ্যারে-সমৃদ্ধ sklearn মডেলের জন্য <code class="inline">joblib</code> সাধারণত দ্রুততর ও বেশি মেমরি-সাশ্রয়ী। সাধারণ পাইথন অবজেক্ট বা কাস্টম ক্লাসের জন্য <code class="inline">pickle</code> যথেষ্ট। উভয় ক্ষেত্রেই মডেল লোড করার সময় একই লাইব্রেরি ভার্সন ব্যবহার নিশ্চিত করুন — ভার্সন মিসম্যাচ সাইলেন্ট এরর তৈরি করতে পারে।</p></div>
+  </div>
+</section>
+<section class="chapter" id="ch-e2e">
+  <div class="chapter-head"><span class="chno">১৫</span><h2>এন্ড-টু-এন্ড রিগ্রেশন প্রজেক্ট উদাহরণ</h2></div>
+  <div class="lede">এই অধ্যায়ে এখন পর্যন্ত শেখা সব কনসেপ্ট — লোডিং, স্প্লিটিং, প্রি-প্রসেসিং, পাইপলাইন, ট্রেনিং, ইভালুয়েশন — একত্রিত করে একটি সম্পূর্ণ, চালানোর-উপযোগী (runnable) ওয়ার্কফ্লো দেখানো হলো।</div>
+  <div class="block">
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># ধরি train.csv, test.csv আছে এবং টার্গেট কলাম হলো 'price'
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, cross_val_score
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import mean_squared_error
+
+# ১. ডেটা লোড
+df = pd.read_csv('train.csv')
+X = df.drop('price', axis=1)
+y = df['price']
+
+# ২. ট্রেন-টেস্ট স্প্লিট
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# ৩. নিউমেরিক ও ক্যাটেগরিক্যাল কলাম শনাক্ত
+numeric_features = X.select_dtypes(include=['int64', 'float64']).columns
+categorical_features = X.select_dtypes(include=['object']).columns
+
+# ৪. ট্রান্সফরমার তৈরি
+numeric_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', StandardScaler())
+])
+categorical_transformer = Pipeline(steps=[
+    ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore'))
+])
+
+# ৫. প্রিপ্রসেসর একত্রিত করা
+preprocessor = ColumnTransformer(transformers=[
+    ('num', numeric_transformer, numeric_features),
+    ('cat', categorical_transformer, categorical_features)
+])
+
+# ৬. সম্পূর্ণ পাইপলাইন
+model = Pipeline(steps=[
+    ('preprocessor', preprocessor),
+    ('regressor', RandomForestRegressor(n_estimators=100, random_state=42))
+])
+
+# ৭. ট্রেন
+model.fit(X_train, y_train)
+
+# ৮. প্রেডিক্ট ও ইভালুয়েট
+y_pred = model.predict(X_test)
+rmse = np.sqrt(mean_squared_error(y_test, y_pred))
+print(f"RMSE: {rmse:.2f}")
+
+# ৯. ক্রস-ভ্যালিডেশন (আরও নির্ভরযোগ্য অনুমান)
+cv_scores = cross_val_score(model, X_train, y_train, cv=5, scoring='neg_root_mean_squared_error')
+print(f"CV RMSE: {-cv_scores.mean():.2f} (+/- {cv_scores.std()*2:.2f})")</code></pre></div>
+    <div class="callout callout-note">
+      <i class="fa-solid fa-circle-info callout-ic"></i>
+      <div><span class="callout-title">প্যাটার্ন লক্ষ্য করুন</span><p>এই এন্ড-টু-এন্ড উদাহরণে <code class="inline">ColumnTransformer</code> এবং <code class="inline">Pipeline</code> একত্রে ব্যবহার করা হয়েছে যাতে প্রি-প্রসেসিং ও মডেলিং একটি একক অবজেক্টে থাকে — এতে <code class="inline">model.fit()</code> কল করলেই পুরো প্রসেস (ইম্পিউট → এনকোড/স্কেল → ট্রেন) একবারে সম্পন্ন হয়, এবং <code class="inline">model.predict()</code>-এ একই ট্রান্সফরমেশন স্বয়ংক্রিয়ভাবে টেস্ট ডেটায় প্রয়োগ হয় — ডেটা লিকেজের ঝুঁকি ছাড়াই।</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="ch-drift">
+  <div class="chapter-head"><span class="chno">১৬</span><h2>ডেটা ড্রিফট ডিটেকশন</h2></div>
+  <div class="lede">ডিপ্লয়মেন্টের পর সময়ের সাথে সাথে নতুন আগত ডেটা প্রশিক্ষণ ডেটা থেকে পরিসংখ্যানগতভাবে ভিন্ন হয়ে যেতে পারে (data drift) — যা মডেলের পারফরম্যান্স নিঃশব্দে খারাপ করে দিতে পারে। নিচের সাধারণ ফাংশনটি ক্যাটেগরিক্যাল ও নিউমেরিক উভয় কলামের জন্য একটি বেসিক ড্রিফট চেক করে।</div>
+
+  <div class="block">
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">def detect_drift(reference_df, current_df, threshold=0.05):
+    """
+    reference_df (ট্রেনিং ডেটা) এবং current_df (নতুন ডেটা)-এর মধ্যে
+    একটি সাধারণ পরিসংখ্যানিক ড্রিফট চেক করে।
+    """
+    drift_report = {}
+    for col in reference_df.columns:
+        if reference_df[col].dtype == 'object':
+            # ক্যাটেগরিক্যাল: কমন ক্যাটাগরির অনুপাতের পার্থক্য যোগফল
+            ref_dist = reference_df[col].value_counts(normalize=True)
+            cur_dist = current_df[col].value_counts(normalize=True)
+            common_cats = set(ref_dist.index) & set(cur_dist.index)
+            diff = sum(abs(ref_dist[cat] - cur_dist[cat]) for cat in common_cats)
+            if diff > threshold:
+                drift_report[col] = f"Drift detected (diff: {diff:.3f})"
+        else:
+            # নিউমেরিক: গড়ের আপেক্ষিক পার্থক্য
+            if abs(reference_df[col].mean() - current_df[col].mean()) / reference_df[col].mean() > threshold:
+                drift_report[col] = "Mean drift"
+    return drift_report
+
+drift = detect_drift(X_train, X_new)
+print(drift)</code></pre></div>
+    <div class="callout callout-tip">
+      <i class="fa-solid fa-lightbulb callout-ic"></i>
+      <div><span class="callout-title">প্রোডাকশন-গ্রেড বিকল্প</span><p>বাস্তব প্রোডাকশন সিস্টেমে এই সাধারণ চেকের পরিবর্তে <strong>Population Stability Index (PSI)</strong>, <strong>Kolmogorov–Smirnov টেস্ট</strong>, অথবা <strong>Evidently AI</strong>-এর মতো ডেডিকেটেড লাইব্রেরি ব্যবহার করা উত্তম, যা পরিসংখ্যানগতভাবে আরও শক্তিশালী এবং অটোমেটেড রিপোর্টিং/অ্যালার্টিং সাপোর্ট করে।</p></div>
+    </div>
+  </div>
+</section>
+<section class="chapter" id="ch-dl">
+  <div class="chapter-head"><span class="chno">১৭</span><h2>TensorFlow ও Keras — সম্পূর্ণ ডিপ লার্নিং হ্যান্ডবুক</h2></div>
+  <div class="lede">ক্লাসিক্যাল ML-এর পরে, এই অধ্যায়ে TensorFlow/Keras দিয়ে নিউরাল নেটওয়ার্ক তৈরি, ট্রেনিং, CNN, ট্রান্সফার লার্নিং, টেক্সট মডেল এবং ডিস্ট্রিবিউটেড ট্রেনিং পর্যন্ত সম্পূর্ণ কভার করা হয়েছে।</div>
+
+  <div class="toc-inline">
+    <div class="toc-title">এই অধ্যায়ের সাব-সেকশন</div>
+    <ul>
+      <li><a href="#dl-setup">সেটআপ ও বেসিক</a></li>
+      <li><a href="#dl-models">মডেল তৈরির ৩টি উপায়</a></li>
+      <li><a href="#dl-data">ডেটা হ্যান্ডলিং</a></li>
+      <li><a href="#dl-training">ট্রেনিং ও কলব্যাক</a></li>
+      <li><a href="#dl-cnn">CNN</a></li>
+      <li><a href="#dl-transfer">ট্রান্সফার লার্নিং</a></li>
+      <li><a href="#dl-text">টেক্সট মডেল (RNN/LSTM)</a></li>
+      <li><a href="#dl-eval">ইভালুয়েশন ও টিউনিং</a></li>
+      <li><a href="#dl-save">সেভ/লোড ও TensorBoard</a></li>
+      <li><a href="#dl-problems">কমন প্রবলেম ও সলিউশন</a></li>
+      <li><a href="#dl-distributed">ডিস্ট্রিবিউটেড ট্রেনিং</a></li>
+      <li><a href="#dl-mnist">সম্পূর্ণ উদাহরণ: MNIST CNN</a></li>
+    </ul>
+  </div>
+
+  <div class="block" id="dl-setup">
+    <h3 class="sub">সেটআপ ও বেসিক</h3>
+    <h4 class="subsub">ইনস্টলেশন</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>bash</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-bash">pip install tensorflow
+
+# GPU সাপোর্টের জন্য (সিস্টেমে CUDA থাকা প্রয়োজন)
+pip install tensorflow[and-cuda]</code></pre></div>
+
+    <h4 class="subsub">ইম্পোর্ট ও ভার্সন চেক</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import tensorflow as tf
+from tensorflow import keras
+
+print(tf.__version__)
+print(keras.__version__)</code></pre></div>
+
+    <h4 class="subsub">টেন্সর অপারেশন বেসিক</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># কনস্ট্যান্ট টেন্সর
+a = tf.constant([[1, 2], [3, 4]])
+b = tf.constant(5)
+c = a + b  # ব্রডকাস্টিং
+
+# ভেরিয়েবল (মডেল প্যারামিটার)
+w = tf.Variable(initial_value=tf.random.normal((10, 1)))
+w.assign(w * 2)  # আপডেট
+
+# গ্রেডিয়েন্ট (GradientTape)
+x = tf.constant(3.0)
+with tf.GradientTape() as tape:
+    tape.watch(x)
+    y = x**2
+dy_dx = tape.gradient(y, x)  # ফলাফল: 6.0</code></pre></div>
+  </div>
+
+  <div class="block" id="dl-models">
+    <h3 class="sub">কেরাস মডেল তৈরির ৩টি উপায়</h3>
+    <h4 class="subsub">১. সিকুয়েনশিয়াল API (সহজ স্তুপ)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">model = keras.Sequential([
+    keras.layers.Dense(64, activation='relu', input_shape=(10,)),
+    keras.layers.Dropout(0.2),
+    keras.layers.Dense(32, activation='relu'),
+    keras.layers.Dense(1, activation='sigmoid')  # বাইনারি ক্লাসিফিকেশন
+])</code></pre></div>
+
+    <h4 class="subsub">২. ফাংশনাল API (কমপ্লেক্স গ্রাফ, মাল্টি-ইনপুট/আউটপুট)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">inputs = keras.Input(shape=(28, 28, 1))  # ইমেজ ইনপুট
+x = keras.layers.Conv2D(32, 3, activation='relu')(inputs)
+x = keras.layers.MaxPooling2D(2)(x)
+x = keras.layers.Flatten()(x)
+x = keras.layers.Dense(128, activation='relu')(x)
+outputs = keras.layers.Dense(10, activation='softmax')(x)  # ১০ ক্লাস
+
+model = keras.Model(inputs=inputs, outputs=outputs)</code></pre></div>
+
+    <h4 class="subsub">৩. মডেল সাবক্লাসিং (পূর্ণ নিয়ন্ত্রণ)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">class MyModel(keras.Model):
+    def __init__(self):
+        super().__init__()
+        self.dense1 = keras.layers.Dense(64, activation='relu')
+        self.dense2 = keras.layers.Dense(10, activation='softmax')
+
+    def call(self, inputs):
+        x = self.dense1(inputs)
+        return self.dense2(x)
+
+model = MyModel()
+
+# মডেল সারাংশ দেখা
+model.build(input_shape=(None, 28, 28, 1))  # None = batch size
+model.summary()</code></pre></div>
+    <div class="callout callout-tip">
+      <i class="fa-solid fa-lightbulb callout-ic"></i>
+      <div><span class="callout-title">কোনটি কখন ব্যবহার করবেন</span><p><strong>Sequential:</strong> সরল, একরৈখিক স্তরবিন্যাস। <strong>Functional:</strong> একাধিক ইনপুট/আউটপুট, শাখা-প্রশাখাযুক্ত (branching) আর্কিটেকচার। <strong>Subclassing:</strong> কাস্টম ফরওয়ার্ড-পাস লজিক বা রিসার্চ-লেভেল নমনীয়তা প্রয়োজন হলে।</p></div>
+    </div>
+  </div>
+
+  <div class="block" id="dl-data">
+    <h3 class="sub">ডেটা হ্যান্ডলিং</h3>
+    <h4 class="subsub">tf.data.Dataset ব্যবহার</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python"># NumPy অ্যারে থেকে
+dataset = tf.data.Dataset.from_tensor_slices((X_train, y_train))
+dataset = dataset.shuffle(buffer_size=1000).batch(32).prefetch(tf.data.AUTOTUNE)
+
+# ইমেজ ফাইল থেকে সরাসরি
+dataset = tf.keras.preprocessing.image_dataset_from_directory(
+    'path/to/images', validation_split=0.2, subset='training',
+    seed=42, image_size=(224, 224), batch_size=32
+)</code></pre></div>
+
+    <h4 class="subsub">ডেটা অগমেন্টেশন (ইমেজ)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">data_augmentation = keras.Sequential([
+    keras.layers.RandomFlip('horizontal'),
+    keras.layers.RandomRotation(0.1),
+    keras.layers.RandomZoom(0.1),
+])
+
+# মডেলের প্রথম স্তর হিসেবেও যোগ করা যায়
+augmented_dataset = dataset.map(lambda x, y: (data_augmentation(x, training=True), y))</code></pre></div>
+
+    <h4 class="subsub">টেক্সট টোকেনাইজেশন</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from tensorflow.keras.layers import TextVectorization
+
+vectorizer = TextVectorization(max_tokens=10000, output_sequence_length=100)
+vectorizer.adapt(train_texts)  # ভোকাবুলারি তৈরি
+
+def vectorize(text, label):
+    return vectorizer(text), label
+
+train_ds = train_ds.map(vectorize)</code></pre></div>
+  </div>
+
+  <div class="block" id="dl-training">
+    <h3 class="sub">মডেল ট্রেনিং</h3>
+    <h4 class="subsub">কম্পাইল ও ফিট</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">model.compile(
+    optimizer='adam',  # বা keras.optimizers.Adam(learning_rate=0.001)
+    loss='sparse_categorical_crossentropy',  # বা 'binary_crossentropy', 'mse'
+    metrics=['accuracy']
+)
+
+history = model.fit(
+    train_dataset,
+    validation_data=val_dataset,
+    epochs=50,
+    callbacks=[...],
+    verbose=1
+)</code></pre></div>
+
+    <h4 class="subsub">কলব্যাক (Callbacks)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">callbacks = [
+    keras.callbacks.EarlyStopping(patience=5, restore_best_weights=True),
+    keras.callbacks.ModelCheckpoint('best_model.h5', save_best_only=True),
+    keras.callbacks.ReduceLROnPlateau(factor=0.5, patience=3),
+    keras.callbacks.TensorBoard(log_dir='./logs')
+]</code></pre></div>
+
+    <details class="accordion">
+      <summary>কাস্টম ট্রেনিং লুপ (GradientTape) <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <div class="acc-body">
+        <p>যখন <code class="inline">model.fit()</code>-এর চেয়ে বেশি নিয়ন্ত্রণ প্রয়োজন (যেমন কাস্টম লস, GAN ট্রেনিং), তখন ম্যানুয়াল ট্রেনিং লুপ লেখা হয়।</p>
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">optimizer = keras.optimizers.Adam()
+loss_fn = keras.losses.SparseCategoricalCrossentropy()
+train_loss = keras.metrics.Mean()
+train_acc = keras.metrics.SparseCategoricalAccuracy()
+
+@tf.function
+def train_step(x, y):
+    with tf.GradientTape() as tape:
+        logits = model(x, training=True)
+        loss = loss_fn(y, logits)
+    grads = tape.gradient(loss, model.trainable_variables)
+    optimizer.apply_gradients(zip(grads, model.trainable_variables))
+    train_loss.update_state(loss)
+    train_acc.update_state(y, logits)
+
+for epoch in range(epochs):
+    for x_batch, y_batch in train_dataset:
+        train_step(x_batch, y_batch)
+    print(f'Epoch {epoch}: Loss={train_loss.result():.4f}, Acc={train_acc.result():.4f}')
+    train_loss.reset_state()
+    train_acc.reset_state()</code></pre></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="block" id="dl-cnn">
+    <h3 class="sub">CNN (কনভোলিউশনাল নিউরাল নেটওয়ার্ক)</h3>
+    <p>ইমেজ ক্লাসিফিকেশন উদাহরণ (CIFAR-10):</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">(X_train, y_train), (X_test, y_test) = keras.datasets.cifar10.load_data()
+X_train, X_test = X_train / 255.0, X_test / 255.0
+
+model = keras.Sequential([
+    keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(32, 32, 3)),
+    keras.layers.MaxPooling2D(2, 2),
+    keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    keras.layers.MaxPooling2D(2, 2),
+    keras.layers.Conv2D(64, (3, 3), activation='relu'),
+    keras.layers.Flatten(),
+    keras.layers.Dense(64, activation='relu'),
+    keras.layers.Dense(10, activation='softmax')
+])
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+history = model.fit(X_train, y_train, epochs=10, validation_split=0.1)</code></pre></div>
+  </div>
+
+  <div class="block" id="dl-transfer">
+    <h3 class="sub">ট্রান্সফার লার্নিং</h3>
+    <p>প্রি-ট্রেইনড মডেল (যেমন MobileNetV2) লোড করে নিজের ডেটাসেটে ফাইন-টিউন করা — কম ডেটা ও কম কম্পিউটে উচ্চ পারফরম্যান্স পাওয়ার সবচেয়ে কার্যকর উপায়।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">base_model = keras.applications.MobileNetV2(
+    input_shape=(224, 224, 3),
+    include_top=False,  # শেষের ক্লাসিফিকেশন হেড বাদ
+    weights='imagenet'
+)
+base_model.trainable = False  # ফ্রিজ
+
+inputs = keras.Input(shape=(224, 224, 3))
+x = keras.applications.mobilenet_v2.preprocess_input(inputs)
+x = base_model(x, training=False)
+x = keras.layers.GlobalAveragePooling2D()(x)
+x = keras.layers.Dropout(0.2)(x)
+outputs = keras.layers.Dense(10, activation='softmax')(x)  # নিজের ক্লাস সংখ্যা
+model = keras.Model(inputs, outputs)</code></pre></div>
+    <h4 class="subsub">ফাইন-টিউনিং (আনফ্রিজ কিছু স্তর)</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">base_model.trainable = True
+
+# শুধু উপরের কিছু স্তর ট্রেইন করা (যেমন ১০০ থেকে শেষ পর্যন্ত)
+for layer in base_model.layers[:100]:
+    layer.trainable = False
+
+model.compile(optimizer=keras.optimizers.Adam(1e-5), ...)  # ছোট লার্নিং রেট গুরুত্বপূর্ণ</code></pre></div>
+  </div>
+
+  <div class="block" id="dl-text">
+    <h3 class="sub">টেক্সট মডেল (RNN / LSTM)</h3>
+    <h4 class="subsub">টোকেনাইজেশন ও এম্বেডিং</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from tensorflow.keras.layers import Embedding, LSTM, Dense
+
+vocab_size = 10000
+max_len = 100
+embedding_dim = 128
+
+model = keras.Sequential([
+    Embedding(vocab_size, embedding_dim, input_length=max_len),
+    LSTM(64, dropout=0.2, recurrent_dropout=0.2),
+    Dense(1, activation='sigmoid')
+])</code></pre></div>
+    <h4 class="subsub">সিকোয়েন্স প্যাডিং</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">from tensorflow.keras.preprocessing.sequence import pad_sequences
+
+sequences = [[1, 2, 3], [4, 5]]  # টোকেন ইনডেক্স
+padded = pad_sequences(sequences, maxlen=max_len, padding='post', truncating='post')</code></pre></div>
+  </div>
+
+  <div class="block" id="dl-eval">
+    <h3 class="sub">মডেল ইভালুয়েশন ও টিউনিং</h3>
+    <h4 class="subsub">ইভালুয়েট</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f'Test accuracy: {test_acc}')</code></pre></div>
+    <h4 class="subsub">লার্নিং রেট শিডিউলার</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">lr_scheduler = keras.optimizers.schedules.ExponentialDecay(
+    initial_learning_rate=0.001, decay_steps=1000, decay_rate=0.9
+)
+optimizer = keras.optimizers.Adam(learning_rate=lr_scheduler)</code></pre></div>
+
+    <details class="accordion">
+      <summary>Keras Tuner দিয়ে হাইপারপ্যারামিটার টিউনিং <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <div class="acc-body">
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>bash</span></div><pre><code class="language-bash">pip install keras-tuner</code></pre></div>
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import keras_tuner as kt
+
+def build_model(hp):
+    model = keras.Sequential()
+    model.add(keras.layers.Flatten(input_shape=(28, 28)))
+
+    hp_units = hp.Int('units', min_value=32, max_value=512, step=32)
+    model.add(keras.layers.Dense(units=hp_units, activation='relu'))
+    model.add(keras.layers.Dense(10, activation='softmax'))
+
+    hp_learning_rate = hp.Choice('learning_rate', values=[1e-2, 1e-3, 1e-4])
+    model.compile(
+        optimizer=keras.optimizers.Adam(learning_rate=hp_learning_rate),
+        loss='sparse_categorical_crossentropy', metrics=['accuracy']
+    )
+    return model
+
+tuner = kt.Hyperband(build_model, objective='val_accuracy', max_epochs=10,
+                      factor=3, directory='my_dir', project_name='intro_to_kt')
+tuner.search(X_train, y_train, epochs=10, validation_data=(X_val, y_val))
+best_hps = tuner.get_best_hyperparameters(num_trials=1)[0]</code></pre></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="block" id="dl-save">
+    <h3 class="sub">মডেল সেভ, লোড ও TensorBoard</h3>
+    <div class="grid-cards">
+      <div class="card"><span class="tag">HDF5</span><h4><i class="fa-solid fa-file"></i> সম্পূর্ণ মডেল সেভ</h4>
+        <div class="code-card" style="margin-top:10px;"><pre><code class="language-python">model.save('my_model.h5')
+loaded_model = keras.models.load_model('my_model.h5')</code></pre></div></div>
+      <div class="card"><span class="tag">SavedModel</span><h4><i class="fa-solid fa-server"></i> TF Serving-এর জন্য</h4>
+        <div class="code-card" style="margin-top:10px;"><pre><code class="language-python">model.save('my_model', save_format='tf')</code></pre></div></div>
+      <div class="card"><span class="tag">শুধু Weights</span><h4><i class="fa-solid fa-weight-hanging"></i> ওয়েট সেভ/লোড</h4>
+        <div class="code-card" style="margin-top:10px;"><pre><code class="language-python">model.save_weights('weights.h5')
+model.load_weights('weights.h5')</code></pre></div></div>
+    </div>
+    <h4 class="subsub">TensorBoard ব্যবহার</h4>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">tensorboard_callback = keras.callbacks.TensorBoard(log_dir='./logs')
+model.fit(..., callbacks=[tensorboard_callback])
+
+# টার্মিনালে টেন্সরবোর্ড চালু করতে:
+# tensorboard --logdir ./logs
+
+# কাস্টম মেট্রিক্স লগ করা
+summary_writer = tf.summary.create_file_writer('logs/custom')
+with summary_writer.as_default():
+    tf.summary.scalar('custom_metric', value, step=epoch)</code></pre></div>
+  </div>
+
+  <div class="block" id="dl-problems">
+    <h3 class="sub">কমন প্রবলেম ও সলিউশন</h3>
+    <div class="table-wrap"><table>
+      <thead><tr><th>সমস্যা</th><th>সমাধান</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ওভারফিটিং</strong></td><td>Dropout, Regularization, EarlyStopping, ডেটা অগমেন্টেশন</td></tr>
+        <tr><td><strong>আন্ডারফিটিং</strong></td><td>মডেল জটিল করা, লার্নিং রেট কমানো, বেশি epoch ব্যবহার</td></tr>
+        <tr><td><strong>গ্রেডিয়েন্ট ভ্যানিশিং/এক্সপ্লোডিং</strong></td><td>BatchNormalization, gradient clipping</td></tr>
+        <tr><td><strong>GPU মেমরি শেষ</strong></td><td>batch size কমানো, <code class="inline">tf.data</code>-র prefetch ব্যবহার</td></tr>
+        <tr><td><strong>কনভার্জ না হওয়া</strong></td><td>লার্নিং রেট অ্যাডজাস্ট, ভিন্ন optimizer (Adam, RMSprop) চেষ্টা</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+
+  <div class="block" id="dl-distributed">
+    <h3 class="sub">ডিস্ট্রিবিউটেড ট্রেনিং (সংক্ষেপ)</h3>
+    <details class="accordion">
+      <summary>মাল্টি-GPU ও TPU স্ট্র্যাটেজি <i class="fa-solid fa-chevron-down chev"></i></summary>
+      <div class="acc-body">
+        <h4 class="subsub">মাল্টি-GPU (MirroredStrategy)</h4>
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">strategy = tf.distribute.MirroredStrategy()
+with strategy.scope():
+    model = create_model()  # আপনার মডেল তৈরি ফাংশন
+    model.compile(...)
+model.fit(...)</code></pre></div>
+        <h4 class="subsub">TPU স্ট্র্যাটেজি (Google Colab)</h4>
+        <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">resolver = tf.distribute.cluster_resolver.TPUClusterResolver()
+tf.config.experimental_connect_to_cluster(resolver)
+tf.tpu.experimental.initialize_tpu_system(resolver)
+strategy = tf.distribute.TPUStrategy(resolver)
+
+with strategy.scope():
+    model = create_model()
+    model.compile(...)</code></pre></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="block" id="dl-mnist">
+    <h3 class="sub">সম্পূর্ণ উদাহরণ: MNIST CNN</h3>
+    <p>সবকিছু একত্রিত করে একটি সম্পূর্ণ, চালানোর-উপযোগী উদাহরণ:</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import tensorflow as tf
+from tensorflow import keras
+
+# ডেটা লোড
+(X_train, y_train), (X_test, y_test) = keras.datasets.mnist.load_data()
+X_train, X_test = X_train / 255.0, X_test / 255.0
+X_train = X_train[..., tf.newaxis]  # চ্যানেল ডাইমেনশন যোগ
+
+# মডেল
+model = keras.Sequential([
+    keras.layers.Conv2D(32, 3, activation='relu', input_shape=(28, 28, 1)),
+    keras.layers.MaxPooling2D(2),
+    keras.layers.Conv2D(64, 3, activation='relu'),
+    keras.layers.MaxPooling2D(2),
+    keras.layers.Flatten(),
+    keras.layers.Dense(128, activation='relu'),
+    keras.layers.Dropout(0.2),
+    keras.layers.Dense(10, activation='softmax')
+])
+
+# কম্পাইল
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
+
+# কলব্যাক
+callbacks = [
+    keras.callbacks.EarlyStopping(patience=3),
+    keras.callbacks.ModelCheckpoint('mnist_cnn.h5', save_best_only=True)
+]
+
+# ট্রেন
+history = model.fit(X_train, y_train, epochs=10, validation_split=0.1, callbacks=callbacks)
+
+# ইভালুয়েট
+test_loss, test_acc = model.evaluate(X_test, y_test)
+print(f'Test accuracy: {test_acc}')</code></pre></div>
+  </div>
+
+  <div class="callout callout-note">
+    <i class="fa-solid fa-circle-info callout-ic"></i>
+    <div><span class="callout-title">অধ্যায় সারাংশ</span><p>এই হ্যান্ডবুকে আমরা কভার করেছি: মডেল তৈরির বিভিন্ন উপায়, ডেটা হ্যান্ডলিং, ট্রেনিং ও কলব্যাক, CNN, ট্রান্সফার লার্নিং, টেক্সট মডেল, মডেল সেভ/লোড ও টিউনিং, TensorBoard এবং ডিস্ট্রিবিউটেড ট্রেনিং। এখন এগুলো নিজের ডেটাসেটে প্রয়োগ করে এগিয়ে যাওয়া যেতে পারে।</p></div>
+  </div>
+</section>
+<section class="chapter" id="ch-utils">
+  <div class="chapter-head"><span class="chno">১৮</span><h2>কুয়েরি ইঞ্জিন ও ইউটিলিটি ফাংশন</h2></div>
+  <div class="lede">এই অধ্যায়ে দুটি বহুমুখী (versatile) ইউটিলিটি ফাংশন দেওয়া হলো যা প্রায় প্রতিটি ডেটা প্রকল্পে বারবার প্রয়োজন হয়: একটি সর্বজনীন কুয়েরি ইঞ্জিন এবং Excel-স্টাইল VLOOKUP-এর সমতুল্য একটি মার্জ ফাংশন।</div>
+
+  <div class="block" id="util-query">
+    <h3 class="sub">query_dataframe() — সর্বজনীন কুয়েরি ইঞ্জিন</h3>
+    <p>Filter, Group, Sort এবং Stats — চারটি সবচেয়ে সাধারণ ডেটা-অনুসন্ধান অপারেশন একটি একক, সামঞ্জস্যপূর্ণ ইন্টারফেসে একত্রিত।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">import pandas as pd
+
+def query_dataframe(df, query_type, **kwargs):
+    """
+    একটি pandas DataFrame-এ বিভিন্ন ধরনের কুয়েরি/অপারেশন সম্পাদন করে।
+
+    Parameters
+    ----------
+    query_type : 'filter', 'group', 'sort', 'stats'
+    **kwargs :
+        filter → condition (str, যেমন 'OpenPorchSF > 400')
+        group  → group_by (str/list), agg (dict/str, যেমন {'SalePrice': 'mean'})
+        sort   → sort_by (str/list), ascending (bool, ডিফল্ট True)
+        stats  → column (str, ঐচ্ছিক — না দিলে সব নিউমেরিক কলামের সামারি)
+
+    Returns
+    -------
+    filter → ফিল্টার করা DataFrame
+    group  → গ্রুপড ও অ্যাগ্রিগেটেড DataFrame
+    sort   → সর্টেড DataFrame
+    stats  → পরিসংখ্যানিক সামারি প্রিন্ট করে (রিটার্ন ভ্যালু নেই)
+    """
+    if not isinstance(df, pd.DataFrame):
+        raise ValueError("Input 'df' must be a pandas DataFrame.")
+
+    if query_type.lower() == "filter":
+        condition = kwargs.get("condition")
+        if not condition:
+            raise ValueError("For 'filter', provide a 'condition' string (e.g., 'OpenPorchSF > 400').")
+        return df.query(condition)
+
+    elif query_type.lower() == "group":
+        group_by = kwargs.get("group_by")
+        agg = kwargs.get("agg", "mean")
+        if not group_by:
+            raise ValueError("For 'group', provide 'group_by' column(s).")
+        return df.groupby(group_by).agg(agg).reset_index()
+
+    elif query_type.lower() == "sort":
+        sort_by = kwargs.get("sort_by")
+        ascending = kwargs.get("ascending", True)
+        if not sort_by:
+            raise ValueError("For 'sort', provide 'sort_by' column(s).")
+        return df.sort_values(by=sort_by, ascending=ascending)
+
+    elif query_type.lower() == "stats":
+        column = kwargs.get("column")
+        if column:
+            if column not in df.columns:
+                raise ValueError(f"Column '{column}' not found in DataFrame.")
+            if pd.api.types.is_numeric_dtype(df[column]):
+                print(f"Statistical Summary for {column}:")
+                print(df[column].describe())
+                print(f"\nSkewness: {df[column].skew():.3f}")
+                print(f"Kurtosis: {df[column].kurtosis():.3f}")
+                print(f"Missing Values: {df[column].isna().sum()}")
+            else:
+                print(f"Value Counts for {column}:")
+                print(df[column].value_counts())
+                print(f"\nMissing Values: {df[column].isna().sum()}")
+        else:
+            numeric_df = df.select_dtypes(include=['number'])
+            print("Statistical Summary for Numeric Columns:")
+            print(numeric_df.describe())
+            print("\nMissing Values per Column:")
+            print(numeric_df.isna().sum())
+        return None
+
+    else:
+        raise ValueError(f"Unsupported query_type: '{query_type}'. Choose 'filter', 'group', 'sort', or 'stats'.")
+
+# ব্যবহারের উদাহরণ:
+# query_dataframe(df, 'filter', condition='SalePrice > 200000 and Neighborhood == "A"')
+# query_dataframe(df, 'group', group_by='Neighborhood', agg={'SalePrice': ['mean', 'count']})
+# query_dataframe(df, 'sort', sort_by='SalePrice', ascending=False)
+# query_dataframe(df, 'stats', column='SalePrice')</code></pre></div>
+    <div class="callout callout-note">
+      <i class="fa-solid fa-circle-info callout-ic"></i>
+      <div><span class="callout-title">প্যারামিটার নোট</span><p><strong>Filter</strong> pandas query সিনট্যাক্স ব্যবহার করে — নিশ্চিত করুন কলামের নাম ও শর্ত বৈধ। <strong>Group</strong>-এ <code class="inline">agg</code> একটি স্ট্রিং (যেমন <code class="inline">"mean"</code>) বা একাধিক অ্যাগ্রিগেশনের জন্য ডিকশনারি হতে পারে। <strong>Stats</strong>-এ নির্দিষ্ট কলাম দিলে বিস্তারিত পরিসংখ্যান (numeric হলে mean/std/skewness, non-numeric হলে value counts) দেখায়; কলাম না দিলে সব নিউমেরিক কলামের সামারি দেখায়। বড় ডেটাফ্রেমে জটিল multi-aggregation গ্রুপ কুয়েরি পারফরম্যান্স অপ্টিমাইজেশনের প্রয়োজন হতে পারে।</p></div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h3 class="sub">vlookup() — Excel-স্টাইল লুকআপ</h3>
+    <p>Excel-এর <code class="inline">VLOOKUP</code> ফাংশনের মতো আচরণ করে — একটি লুকআপ ডেটাফ্রেম থেকে নির্দিষ্ট কলামের মান মূল ডেটাফ্রেমে যোগ করে।</p>
+    <div class="code-card"><div class="code-head"><span class="code-lang"><span class="lang-dot"></span>python</span><button class="copy-btn"><i class="fa-solid fa-copy"></i> Copy</button></div><pre><code class="language-python">def vlookup(df, lookup_df, key_column, lookup_column, return_column, how="left"):
+    """
+    একটি lookup DataFrame-এর সাথে merge করে VLOOKUP-এর মতো অপারেশন করে।
+
+    Parameters
+    ----------
+    df : pandas DataFrame — মূল ডেটাফ্রেম
+    lookup_df : pandas DataFrame — যেখান থেকে মান আনা হবে
+    key_column : str — df-এর যে কলাম মিলাতে হবে
+    lookup_column : str — lookup_df-এর যে কলাম মিলাতে হবে
+    return_column : str — lookup_df থেকে যে কলামের মান আনতে হবে
+    how : 'left', 'inner', 'right', 'outer' (ডিফল্ট 'left')
+
+    Returns
+    -------
+    df-এর সব কলাম + return_column সহ একটি নতুন DataFrame
+    """
+    if not isinstance(df, pd.DataFrame) or not isinstance(lookup_df, pd.DataFrame):
+        raise ValueError("Both 'df' and 'lookup_df' must be pandas DataFrames.")
+    if key_column not in df.columns:
+        raise ValueError(f"Key column '{key_column}' not found in main DataFrame.")
+    if lookup_column not in lookup_df.columns:
+        raise ValueError(f"Lookup column '{lookup_column}' not found in lookup DataFrame.")
+    if return_column not in lookup_df.columns:
+        raise ValueError(f"Return column '{return_column}' not found in lookup DataFrame.")
+    if how not in ['left', 'inner', 'right', 'outer']:
+        raise ValueError(f"Invalid 'how' parameter: '{how}'.")
+
+    try:
+        result = df.merge(
+            lookup_df[[lookup_column, return_column]],
+            left_on=key_column, right_on=lookup_column, how=how
+        )
+        if lookup_column != key_column:
+            result = result.drop(columns=lookup_column, errors='ignore')
+        return result
+    except Exception as e:
+        raise ValueError(f"VLOOKUP operation failed: {e}")
+
+# ব্যবহার:
+# result = vlookup(orders_df, products_df, key_column='product_id',
+#                   lookup_column='id', return_column='product_name')</code></pre></div>
+  </div>
+</section>
+
+<section class="chapter" id="ch-tips">
+  <div class="chapter-head"><span class="chno">১৯</span><h2>টিপস ও ট্রিকস চিটশিট</h2></div>
+  <div class="lede">প্রতিদিনের কাজে বারবার দরকার হয় এমন ছোট, কিন্তু গুরুত্বপূর্ণ pandas প্যাটার্নের একটি দ্রুত-রেফারেন্স তালিকা।</div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>কাজ</th><th>কোড</th></tr></thead>
+    <tbody>
+      <tr><td>NaN ভ্যালু দেখা (কুয়েরি দিয়ে)</td><td><code class="inline">df.query('column.isna()')</code></td></tr>
+      <tr><td>NaN ভ্যালু দেখা (pandas দিয়ে)</td><td><code class="inline">df[df['column'].isna()]</code></td></tr>
+      <tr><td>NaN রিপ্লেস (স্থির মান দিয়ে)</td><td><code class="inline">df['column'].fillna('Unknown', inplace=True)</code></td></tr>
+      <tr><td>নির্দিষ্ট মানকে NaN বানানো</td><td><code class="inline">df['column'].replace('--', np.nan, inplace=True)</code></td></tr>
+      <tr><td>NaN রিপ্লেস (mode দিয়ে)</td><td><code class="inline">df['column'].fillna(df['column'].mode()[0], inplace=True)</code></td></tr>
+      <tr><td>নির্দিষ্ট কন্ডিশনে রো ড্রপ</td><td><code class="inline">df = df.drop(df[df['price'] >= 200000].index)</code></td></tr>
+      <tr><td>NaN থাকা রো ড্রপ</td><td><code class="inline">df = df.dropna(subset=['engine'])</code></td></tr>
+      <tr><td>কলাম ড্রপ</td><td><code class="inline">df = df.drop(['col1', 'col2'], axis=1)</code></td></tr>
+      <tr><td>ডুপ্লিকেট রো ড্রপ</td><td><code class="inline">df = df.drop_duplicates()</code></td></tr>
+      <tr><td>নির্দিষ্ট কলাম অনুযায়ী ডুপ্লিকেট ড্রপ</td><td><code class="inline">df = df.drop_duplicates(subset=['col1', 'col2'])</code></td></tr>
+      <tr><td>ভ্যালু কাউন্টস (NaN সহ)</td><td><code class="inline">df['col'].value_counts(dropna=False)</code></td></tr>
+      <tr><td>দুই ডেটাফ্রেম যোগ করা (স্ট্যাক)</td><td><code class="inline">pd.concat([df1, df2], ignore_index=True)</code></td></tr>
+      <tr><td>কলামের নাম পরিবর্তন</td><td><code class="inline">df.rename(columns={'old': 'new'}, inplace=True)</code></td></tr>
+      <tr><td>লগ ট্রান্সফরমেশন রিভার্ট</td><td><code class="inline">df['price_original'] = np.expm1(df['price_log'])</code></td></tr>
+      <tr><td>প্লটে সায়েন্টিফিক নোটেশন বন্ধ</td><td><code class="inline">plt.ticklabel_format(style='plain')</code></td></tr>
+      <tr><td>গভীর কপি (deep copy)</td><td><code class="inline">df_copy = df.copy(deep=True)</code></td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="callout callout-tip">
+    <i class="fa-solid fa-lightbulb callout-ic"></i>
+    <div><span class="callout-title">টিপ</span><p>এই চিটশিটের প্রতিটি লাইন ছোট মনে হলেও, এগুলোই প্রতিদিনের ডেটা-ক্লিনিং কাজের ৮০% সময় বাঁচায়। উপরের সার্চ বক্সে যেকোনো অপারেশনের নাম লিখে দ্রুত খুঁজে নিতে পারেন।</p></div>
+  </div>
+</section>
+<section class="chapter" id="faq">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-circle-question"></i></span><h2>প্রায়শই জিজ্ঞাসিত প্রশ্ন (FAQ)</h2></div>
+  <div class="lede">নতুন ও অভিজ্ঞ — উভয় ধরনের ব্যবহারকারীর সাধারণ প্রশ্নের সংক্ষিপ্ত ও ব্যবহারিক উত্তর।</div>
+
+  <div class="block">
+    <details class="faq-item">
+      <summary>Conda এনভায়রনমেন্ট বনাম venv — কোনটা ব্যবহার করা উচিত? <i class="fa-solid fa-plus"></i></summary>
+      <p>Conda প্যাকেজ ও এনভায়রনমেন্ট — উভয়ই ম্যানেজ করে এবং non-Python ডিপেন্ডেন্সি (যেমন CUDA, C লাইব্রেরি) হ্যান্ডেল করতে পারে, যা ডেটা সায়েন্স/ML প্রকল্পে সুবিধাজনক। <code class="inline">venv</code> হালকা, শুধুমাত্র Python প্যাকেজ ম্যানেজ করে — সাধারণ ওয়েব/সফটওয়্যার প্রকল্পে যথেষ্ট। ML/DL প্রকল্পে Conda বেশি প্রচলিত ও সুবিধাজনক।</p>
+    </details>
+    <details class="faq-item">
+      <summary>KNN Imputer বনাম MICE — কোনটা কখন ব্যবহার করব? <i class="fa-solid fa-plus"></i></summary>
+      <p>ডেটাসেট ছোট থেকে মাঝারি হলে এবং ফিচারগুলোর মধ্যে সরল সম্পর্ক থাকলে KNN Imputer দ্রুত ও কার্যকর। জটিল, বহু-স্তরীয় আন্তঃফিচার সম্পর্ক থাকলে এবং প্রতিটি মিসিং ভ্যালুর জন্য একাধিক সম্ভাব্য মান বিবেচনা করতে চাইলে (uncertainty quantification) MICE বেশি উপযুক্ত, যদিও এটি কম্পিউটেশনালি ব্যয়বহুল।</p>
+    </details>
+    <details class="faq-item">
+      <summary>One-Hot Encoding না Target Encoding — কীভাবে সিদ্ধান্ত নেব? <i class="fa-solid fa-plus"></i></summary>
+      <p>ক্যাটাগরি সংখ্যা কম (১০-১৫টির কম) হলে One-Hot Encoding নিরাপদ পছন্দ। ক্যাটাগরি সংখ্যা অনেক বেশি (হাই-কার্ডিনালিটি, যেমন জিপ কোড, প্রোডাক্ট আইডি) হলে Target Encoding বা Frequency Encoding বিবেচনা করুন, কিন্তু ডেটা লিকেজ এড়াতে অবশ্যই স্মুথিং ব্যবহার করুন এবং শুধুমাত্র ট্রেনিং ফোল্ডে ফিট করুন।</p>
+    </details>
+    <details class="faq-item">
+      <summary>GridSearchCV অনেক সময় নিচ্ছে — কী করব? <i class="fa-solid fa-plus"></i></summary>
+      <p>প্রথমে প্যারামিটার গ্রিডের আকার কমান, অথবা <code class="inline">RandomizedSearchCV</code> ব্যবহার করুন যা সীমিত সংখ্যক কম্বিনেশন র‍্যান্ডমলি পরীক্ষা করে। আরও বড় স্পেসে <code class="inline">Optuna</code>-এর মতো Bayesian optimization টুল ব্যবহার করুন, যা কম সময়ে ভালো ফলাফল দেয়। এছাড়া <code class="inline">n_jobs=-1</code> দিয়ে সব CPU কোর ব্যবহার করুন।</p>
+    </details>
+    <details class="faq-item">
+      <summary>SHAP বনাম LIME — কোনটা বেছে নেব? <i class="fa-solid fa-plus"></i></summary>
+      <p>Tree-based মডেল (Random Forest, XGBoost) ব্যবহার করলে <code class="inline">SHAP TreeExplainer</code> দ্রুত ও নির্ভুল ফলাফল দেয় এবং গ্লোবাল+লোকাল উভয় ব্যাখ্যা দিতে পারে। যেকোনো ধরনের ব্ল্যাক-বক্স মডেলের (যেমন নিউরাল নেটওয়ার্ক) জন্য দ্রুত, একটি নির্দিষ্ট প্রেডিকশনের সরল ব্যাখ্যা দরকার হলে LIME উপযোগী।</p>
+    </details>
+    <details class="faq-item">
+      <summary>মডেল ট্রেনিং-এ ভালো স্কোর কিন্তু প্রোডাকশনে খারাপ পারফরম্যান্স কেন? <i class="fa-solid fa-plus"></i></summary>
+      <p>এটি সাধারণত <strong>ডেটা ড্রিফট</strong> (নতুন ডেটার বণ্টন ট্রেনিং ডেটা থেকে ভিন্ন) বা <strong>ডেটা লিকেজ</strong> (ট্রেনিং সময়ে টেস্ট ডেটার তথ্য অনিচ্ছাকৃতভাবে ব্যবহার হওয়া)-এর ফলে ঘটে। অধ্যায় ১৬-তে দেওয়া ড্রিফট ডিটেকশন ফাংশন দিয়ে নিয়মিত মনিটর করুন এবং পাইপলাইন ব্যবহার করে ট্রান্সফরমেশন সবসময় শুধুমাত্র ট্রেনিং ফোল্ডে ফিট করুন।</p>
+    </details>
+    <details class="faq-item">
+      <summary>TensorFlow-এ GPU ব্যবহার হচ্ছে কিনা কীভাবে জানব? <i class="fa-solid fa-plus"></i></summary>
+      <p>নিচের কোড দিয়ে চেক করুন: <code class="inline">tf.config.list_physical_devices('GPU')</code>। যদি খালি লিস্ট রিটার্ন করে, তাহলে GPU-সাপোর্টেড TensorFlow (<code class="inline">tensorflow[and-cuda]</code>) ইনস্টল করা আছে কিনা এবং সিস্টেমে CUDA/cuDNN সঠিকভাবে কনফিগার করা আছে কিনা যাচাই করুন।</p>
+    </details>
+  </div>
+</section>
+
+<section class="chapter" id="best-practices">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-medal"></i></span><h2>বেস্ট প্র্যাকটিস</h2></div>
+  <div class="lede">সম্পূর্ণ ডকুমেন্ট জুড়ে ছড়িয়ে থাকা গুরুত্বপূর্ণ পরামর্শগুলো এক জায়গায়।</div>
+
+  <div class="grid-cards">
+    <div class="card"><h4><i class="fa-solid fa-cubes-stacked"></i> সবসময় Pipeline ব্যবহার করুন</h4><p>ইম্পিউটেশন, এনকোডিং, স্কেলিং ও মডেলিং একটি <code class="inline">Pipeline</code>-এ রাখুন যাতে ট্রান্সফরমেশন শুধুমাত্র ট্রেনিং ফোল্ডে ফিট হয় এবং ডেটা লিকেজ প্রতিরোধ হয়।</p></div>
+    <div class="card"><h4><i class="fa-solid fa-layer-group"></i> সহজ থেকে জটিলে যান</h4><p>প্রথমে সিম্পল ইম্পিউটেশন/এনকোডিং দিয়ে একটি বেসলাইন মডেল তৈরি করুন, তারপর ধাপে ধাপে জটিল পদ্ধতি (KNN, MICE, Target Encoding) প্রয়োগ করে উন্নতি মাপুন।</p></div>
+    <div class="card"><h4><i class="fa-solid fa-vial"></i> ক্রস-ভ্যালিডেশন করুন</h4><p>শুধু একটি train-test স্প্লিটের উপর নির্ভর না করে, সবসময় ক্রস-ভ্যালিডেশন ব্যবহার করে মডেলের পারফরম্যান্স আরও নির্ভরযোগ্যভাবে যাচাই করুন।</p></div>
+    <div class="card"><h4><i class="fa-solid fa-seedling"></i> Random State ফিক্স করুন</h4><p>রিপ্রোডিউসিবিলিটি নিশ্চিত করতে <code class="inline">random_state=42</code>-এর মতো ফিক্সড সিড ব্যবহার করুন — এতে ফলাফল বারবার একই আসে।</p></div>
+    <div class="card"><h4><i class="fa-solid fa-code-branch"></i> এনভায়রনমেন্ট ভার্সন কন্ট্রোলে রাখুন</h4><p>প্রতিটি প্রকল্পের <code class="inline">environment.yaml</code> বা <code class="inline">requirements.txt</code> Git-এ কমিট করুন যাতে অন্য কেউ একই এনভায়রনমেন্ট পুনরায় তৈরি করতে পারে।</p></div>
+    <div class="card"><h4><i class="fa-solid fa-magnifying-glass-chart"></i> ডোমেইন নলেজ দিয়ে যাচাই করুন</h4><p>আউটলাইয়ার বা মিসিং ডেটা স্বয়ংক্রিয়ভাবে রিমুভ/পূরণ করার আগে বুঝে নিন সেটা প্রকৃত সিগন্যাল নাকি ডেটা এন্ট্রি ত্রুটি।</p></div>
+    <div class="card"><h4><i class="fa-solid fa-chart-line"></i> প্রোডাকশনে মনিটর করুন</h4><p>ডিপ্লয়মেন্টের পরেও মডেলের কাজ শেষ হয় না — নিয়মিত ডেটা ড্রিফট ও পারফরম্যান্স মনিটর করে প্রয়োজনে রিট্রেইন করুন।</p></div>
+    <div class="card"><h4><i class="fa-solid fa-eye"></i> মডেল ইন্টারপ্রেট করুন</h4><p>বিশেষত রেগুলেটেড খাতে (ফিন্যান্স, হেলথকেয়ার) SHAP/LIME দিয়ে মডেলের সিদ্ধান্ত ব্যাখ্যাযোগ্য রাখুন — এতে বিশ্বাসযোগ্যতা ও ডিবাগিং সহজ হয়।</p></div>
+  </div>
+</section>
+
+<section class="chapter" id="mistakes">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-bug"></i></span><h2>সাধারণ ভুল (Common Mistakes)</h2></div>
+  <div class="lede">নতুন প্র্যাক্টিশনাররা যেসব ভুল বারবার করে থাকেন এবং সেগুলো কীভাবে এড়ানো যায়।</div>
+
+  <div class="block">
+    <div class="callout callout-danger">
+      <i class="fa-solid fa-circle-exclamation callout-ic"></i>
+      <div><span class="callout-title">১. ট্রান্সফরমেশন পুরো ডেটাসেটে ফিট করা</span><p>স্কেলার/এনকোডার/ইম্পিউটার train+test একসাথে <code class="inline">fit()</code> করলে টেস্ট সেটের তথ্য ট্রেনিং-এ লিক হয়ে যায়। সবসময় <code class="inline">fit()</code> শুধু ট্রেনিং ডেটায় করুন, তারপর <code class="inline">transform()</code> উভয় সেটে প্রয়োগ করুন — অথবা Pipeline ব্যবহার করুন যা এটি স্বয়ংক্রিয়ভাবে নিশ্চিত করে।</p></div>
+    </div>
+    <div class="callout callout-danger">
+      <i class="fa-solid fa-circle-exclamation callout-ic"></i>
+      <div><span class="callout-title">২. স্প্লিটের আগে SMOTE/রি-স্যাম্পলিং প্রয়োগ করা</span><p>পুরো ডেটাসেটে SMOTE প্রয়োগ করে তারপর ট্রেন-টেস্ট স্প্লিট করলে সিন্থেটিক ডেটা টেস্ট সেটে লিক হয়ে যেতে পারে। স্প্লিট করার পর শুধুমাত্র ট্রেনিং সেটে SMOTE প্রয়োগ করুন।</p></div>
+    </div>
+    <div class="callout callout-danger">
+      <i class="fa-solid fa-circle-exclamation callout-ic"></i>
+      <div><span class="callout-title">৩. টাইম-সিরিজ ডেটা র‍্যান্ডম শাফল করে স্প্লিট করা</span><p>এতে ভবিষ্যতের তথ্য ট্রেনিং সেটে ঢুকে যায়, যা বাস্তব-বিশ্বে অসম্ভব একটি পরিস্থিতি তৈরি করে এবং মডেলের ফলাফল বিভ্রান্তিকরভাবে ভালো দেখায়।</p></div>
+    </div>
+    <div class="callout callout-danger">
+      <i class="fa-solid fa-circle-exclamation callout-ic"></i>
+      <div><span class="callout-title">৪. ইমব্যালেন্সড ডেটায় শুধু Accuracy দেখা</span><p>৯৯% ক্লাস A এবং ১% ক্লাস B হলে, সবসময় "A" প্রেডিক্ট করা মডেলও ৯৯% accuracy পাবে অথচ এটি সম্পূর্ণ অকার্যকর। Precision, Recall, F1-score বা AUC-ROC-এর দিকে নজর দিন।</p></div>
+    </div>
+    <div class="callout callout-danger">
+      <i class="fa-solid fa-circle-exclamation callout-ic"></i>
+      <div><span class="callout-title">৫. উচ্চ-কার্ডিনালিটি ফিচারে One-Hot Encoding ব্যবহার</span><p>শত শত ইউনিক ক্যাটাগরি থাকলে One-Hot Encoding প্রচুর কলাম তৈরি করে (dimensionality explosion), যা মেমরি সমস্যা ও ওভারফিটিং ঘটাতে পারে — এক্ষেত্রে Target/Frequency/Hashing Encoding বিবেচনা করুন।</p></div>
+    </div>
+    <div class="callout callout-danger">
+      <i class="fa-solid fa-circle-exclamation callout-ic"></i>
+      <div><span class="callout-title">৬. random_state সেট না করা</span><p>এর ফলে প্রতিবার কোড রান করলে ভিন্ন ফলাফল আসতে পারে, যা ডিবাগিং ও রেজাল্ট তুলনা কঠিন করে তোলে — সবসময় একটি ফিক্সড সিড ব্যবহার করুন।</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="chapter" id="troubleshooting">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-screwdriver-wrench"></i></span><h2>ট্রাবলশুটিং গাইড</h2></div>
+  <div class="lede">সাধারণ error message ও তার সম্ভাব্য কারণ/সমাধান।</div>
+
+  <div class="table-wrap"><table>
+    <thead><tr><th>সমস্যা / Error</th><th>সম্ভাব্য কারণ</th><th>সমাধান</th></tr></thead>
+    <tbody>
+      <tr><td><code class="inline">ValueError: Input contains NaN</code></td><td>মডেল ফিট করার সময় ডেটাতে মিসিং ভ্যালু আছে</td><td>ফিট করার আগে <code class="inline">analyze_missing_data()</code> দিয়ে চেক করুন এবং উপযুক্ত ইম্পিউটেশন প্রয়োগ করুন</td></tr>
+      <tr><td><code class="inline">ValueError: could not convert string to float</code></td><td>ক্যাটেগরিক্যাল কলাম এনকোড না করেই মডেলে দেওয়া হয়েছে</td><td>Label/One-Hot/Target Encoding প্রয়োগ করুন অধ্যায় ৬ অনুযায়ী</td></tr>
+      <tr><td><code class="inline">Found unknown categories</code> (OneHotEncoder)</td><td>টেস্ট সেটে ট্রেনিং সেটে না-থাকা নতুন ক্যাটাগরি এসেছে</td><td><code class="inline">OneHotEncoder(handle_unknown='ignore')</code> ব্যবহার করুন</td></tr>
+      <tr><td>Conda এনভায়রনমেন্ট খুঁজে পাওয়া যাচ্ছে না</td><td>ভুল পাথে তৈরি হয়েছে, বা <code class="inline">-n</code> vs <code class="inline">-p</code> মিশে গেছে</td><td><code class="inline">conda env list</code> দিয়ে সঠিক পাথ/নাম যাচাই করুন</td></tr>
+      <tr><td>GridSearchCV/RandomizedSearchCV অনেক ধীর</td><td>বড় প্যারামিটার স্পেস, বেশি <code class="inline">cv</code> ফোল্ড</td><td><code class="inline">n_jobs=-1</code> ব্যবহার করুন, স্পেস ছোট করুন, বা Optuna-তে যান</td></tr>
+      <tr><td>মডেলের ট্রেনিং accuracy খুব বেশি, ভ্যালিডেশন কম</td><td>ওভারফিটিং</td><td>Regularization, Dropout, EarlyStopping, বা আরও ডেটা যোগ করুন</td></tr>
+      <tr><td><code class="inline">tf.config.list_physical_devices('GPU')</code> খালি রিটার্ন করে</td><td>GPU-সাপোর্টেড TensorFlow ইনস্টল নেই বা CUDA কনফিগার হয়নি</td><td><code class="inline">pip install tensorflow[and-cuda]</code> এবং ড্রাইভার/CUDA ভার্সন যাচাই করুন</td></tr>
+      <tr><td>SHAP <code class="inline">TreeExplainer</code> এরর দিচ্ছে</td><td>মডেল টাইপ tree-based নয়</td><td>নন-ট্রি মডেলের জন্য <code class="inline">shap.KernelExplainer</code> বা <code class="inline">shap.Explainer</code> ব্যবহার করুন</td></tr>
+      <tr><td>Word2Vec-এ প্রতিবার ভিন্ন ফলাফল</td><td><code class="inline">seed</code> সেট করা হয়নি</td><td><code class="inline">Word2Vec(..., seed=42, workers=1)</code> — নোট: মাল্টি-থ্রেড হলে সম্পূর্ণ ডিটারমিনিজম নিশ্চিত নাও হতে পারে</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section class="chapter" id="conclusion">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-flag-checkered"></i></span><h2>উপসংহার</h2></div>
+  <div class="lede">
+    <p>এই হ্যান্ডবুকে আমরা একটি সম্পূর্ণ মেশিন লার্নিং প্রকল্পের জীবনচক্র — এনভায়রনমেন্ট সেটআপ থেকে শুরু করে ডেটা এক্সপ্লোরেশন, প্রি-প্রসেসিং, ফিচার ইঞ্জিনিয়ারিং, মডেল ট্রেনিং, টিউনিং, ইভালুয়েশন, ব্যাখ্যাযোগ্যতা এবং সবশেষে ডিপ লার্নিং পর্যন্ত — একত্রিত ও সুসংগঠিতভাবে কভার করেছি। প্রতিটি অধ্যায়ে ব্যবহারিক, কপি-পেস্ট-রেডি কোড এবং কখন কোন পদ্ধতি বেছে নেবেন তার স্পষ্ট নির্দেশনা দেওয়া হয়েছে।</p>
+    <p>মনে রাখা জরুরি যে মেশিন লার্নিং একটি চক্রাকার (iterative) প্রক্রিয়া — প্রথম মডেলটিই চূড়ান্ত হবে না। ডেটা বোঝা, পরীক্ষা-নিরীক্ষা করা এবং ধারাবাহিকভাবে মনিটর ও উন্নত করার মানসিকতা নিয়ে এগিয়ে যাওয়াই দীর্ঘমেয়াদে সবচেয়ে ভালো ফলাফল দেয়।</p>
+  </div>
+</section>
+
+<section class="chapter" id="references">
+  <div class="chapter-head"><span class="chno"><i class="fa-solid fa-bookmark"></i></span><h2>রেফারেন্স</h2></div>
+  <div class="lede">
+  <div class="table-wrap"><table>
+    <thead><tr><th>টুল / লাইব্রেরি</th><th>অফিসিয়াল ডকুমেন্টেশন</th></tr></thead>
+    <tbody>
+      <tr><td>scikit-learn</td><td>scikit-learn.org/stable/documentation.html</td></tr>
+      <tr><td>pandas</td><td>pandas.pydata.org/docs</td></tr>
+      <tr><td>TensorFlow / Keras</td><td>tensorflow.org/guide</td></tr>
+      <tr><td>SHAP</td><td>shap.readthedocs.io</td></tr>
+      <tr><td>LIME</td><td>github.com/marcotcr/lime</td></tr>
+      <tr><td>Optuna</td><td>optuna.readthedocs.io</td></tr>
+      <tr><td>imbalanced-learn</td><td>imbalanced-learn.org</td></tr>
+      <tr><td>Gensim (Word2Vec)</td><td>radimrehurek.com/gensim</td></tr>
+      <tr><td>Conda</td><td>docs.conda.io</td></tr>
+      <tr><td>Missingno</td><td>github.com/ResidentMario/missingno</td></tr>
+    </tbody>
+  </table></div>
+  <p style="font-size:13.5px;color:var(--ink-faint);">উৎস ডকুমেন্ট: Handbook_ML.docx, ML_Function.docx, Data_Representation_and_Vectorization.docx, conda_.docx — এই চারটি নোট বিশ্লেষণ ও একত্রিত করে এই ডকুমেন্টেশন তৈরি করা হয়েছে।</p>
+  </div>
+</section>
+
+</div><!-- /content-inner (chapters) -->
+
+<footer class="site-footer">
+  <div class="fbrand"><i class="fa-solid fa-diagram-project"></i> ML হ্যান্ডবুক</div>
+  <p>একটি কনসোলিডেটেড, সিঙ্গেল-ফাইল প্রফেশনাল ডকুমেন্টেশন — চারটি উৎস নোট থেকে তৈরি।</p>
+  <p style="margin-top:14px;font-size:12px;">© ২০২৬ · সকল কোড উদাহরণ শিক্ষামূলক উদ্দেশ্যে প্রদত্ত।</p>
+</footer>
+
+    </div><!-- /content-inner (outer wrapper) -->
+  </main>
+</div><!-- /layout -->
+
+<button id="back-to-top" aria-label="উপরে ফিরে যান"><i class="fa-solid fa-arrow-up"></i></button>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ===================== THEME TOGGLE ===================== */
+  var root = document.documentElement;
+  var themeBtn = document.getElementById('theme-toggle');
+  function setTheme(t){
+    root.setAttribute('data-theme', t);
+    if(themeBtn){
+      themeBtn.innerHTML = t === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+      themeBtn.classList.toggle('active', t === 'dark');
+    }
+  }
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(prefersDark ? 'dark' : 'light');
+  if(themeBtn){
+    themeBtn.addEventListener('click', function(){
+      var current = root.getAttribute('data-theme');
+      setTheme(current === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  /* ===================== MOBILE SIDEBAR ===================== */
+  var hamburger = document.getElementById('hamburger-btn');
+  var sidebar = document.getElementById('sidebar');
+  var backdrop = document.getElementById('sidebar-backdrop');
+  function openSidebar(){
+    sidebar.classList.add('open');
+    backdrop.classList.add('show');
+    hamburger.setAttribute('aria-expanded', 'true');
+  }
+  function closeSidebar(){
+    sidebar.classList.remove('open');
+    backdrop.classList.remove('show');
+    hamburger.setAttribute('aria-expanded', 'false');
+  }
+  if(hamburger){
+    hamburger.addEventListener('click', function(){
+      sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+    });
+  }
+  if(backdrop){ backdrop.addEventListener('click', closeSidebar); }
+  sidebar.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click', function(){ if(window.innerWidth <= 980){ closeSidebar(); } });
+  });
+
+  /* ===================== PROGRESS BAR + BACK TO TOP + ACTIVE NAV ===================== */
+  var progressBar = document.getElementById('progress-bar');
+  var backToTop = document.getElementById('back-to-top');
+  var navLinks = Array.prototype.slice.call(sidebar.querySelectorAll('a[href^="#"]'));
+  var sectionEls = navLinks.map(function(a){
+    var id = a.getAttribute('href').slice(1);
+    return document.getElementById(id);
+  });
+
+  function onScroll(){
+    var scrollTop = window.scrollY || document.documentElement.scrollTop;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    var pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    if(progressBar) progressBar.style.width = pct + '%';
+
+    if(backToTop){
+      if(scrollTop > 500) backToTop.classList.add('show');
+      else backToTop.classList.remove('show');
+    }
+
+    var activeIdx = -1;
+    for(var i = 0; i < sectionEls.length; i++){
+      var el = sectionEls[i];
+      if(el && el.getBoundingClientRect().top - 100 <= 0){ activeIdx = i; }
+    }
+    navLinks.forEach(function(a){ a.classList.remove('active'); });
+    if(activeIdx >= 0 && navLinks[activeIdx]){ navLinks[activeIdx].classList.add('active'); }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  if(backToTop){
+    backToTop.addEventListener('click', function(){
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  /* ===================== PRINT ===================== */
+  var printBtn = document.getElementById('print-btn');
+  if(printBtn){ printBtn.addEventListener('click', function(){ window.print(); }); }
+
+  /* ===================== EXPAND / COLLAPSE ALL ===================== */
+  var expandBtn = document.getElementById('expand-all-btn');
+  var expanded = false;
+  if(expandBtn){
+    expandBtn.addEventListener('click', function(){
+      expanded = !expanded;
+      document.querySelectorAll('details').forEach(function(d){ d.open = expanded; });
+      expandBtn.classList.toggle('active', expanded);
+      expandBtn.title = expanded ? 'সব সেকশন বন্ধ করুন' : 'সব সেকশন খুলুন';
+    });
+  }
+
+  /* ===================== COPY CODE BUTTON ===================== */
+  document.querySelectorAll('.copy-btn').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var card = btn.closest('.code-card');
+      var codeEl = card ? card.querySelector('code') : null;
+      if(!codeEl) return;
+      var text = codeEl.textContent;
+      var doCopyFallback = function(){
+        var ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch(e){}
+        document.body.removeChild(ta);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).catch(doCopyFallback);
+      } else {
+        doCopyFallback();
+      }
+      var original = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
+      btn.classList.add('copied');
+      setTimeout(function(){ btn.innerHTML = original; btn.classList.remove('copied'); }, 1800);
+    });
+  });
+
+  /* ===================== SYNTAX HIGHLIGHTING (lightweight) ===================== */
+  var PY_KEYWORDS = ['def','class','import','from','as','return','if','elif','else','for','while',
+    'try','except','finally','with','in','is','not','and','or','lambda','None','True','False',
+    'raise','yield','pass','break','continue','global','nonlocal','assert','del','async','await'];
+  var BASH_KEYWORDS = ['if','then','else','fi','for','do','done','while','echo','export','cd','conda',
+    'pip','activate','deactivate','create','install','list','env'];
+
+  function escapeHtml(s){
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function highlightPython(code){
+    var tokenRe = /(#.*$)|('''[\s\S]*?'''|"""[\s\S]*?"""|'(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\b\d+\.?\d*\b)|(@\w+)|(\b[A-Za-z_][A-Za-z0-9_]*(?=\())|(\b[A-Za-z_][A-Za-z0-9_]*\b)/gm;
+    return code.replace(tokenRe, function(match, comment, str, num, dec, fn, word){
+      if(comment !== undefined) return '<span class="tok-com">' + escapeHtml(comment) + '</span>';
+      if(str !== undefined) return '<span class="tok-str">' + escapeHtml(str) + '</span>';
+      if(num !== undefined) return '<span class="tok-num">' + escapeHtml(num) + '</span>';
+      if(dec !== undefined) return '<span class="tok-dec">' + escapeHtml(dec) + '</span>';
+      if(fn !== undefined) return '<span class="tok-fn">' + escapeHtml(fn) + '</span>';
+      if(word !== undefined){
+        if(PY_KEYWORDS.indexOf(word) !== -1) return '<span class="tok-kw">' + escapeHtml(word) + '</span>';
+        return escapeHtml(word);
+      }
+      return escapeHtml(match);
+    });
+  }
+
+  function highlightBash(code){
+    var tokenRe = /(#.*$)|('(?:[^'\\]|\\.)*'|"(?:[^"\\]|\\.)*")|(\b\d+\b)|(\$\w+|\$\{[^}]+\})|(\b[A-Za-z_][A-Za-z0-9_\-]*\b)/gm;
+    return code.replace(tokenRe, function(match, comment, str, num, variable, word){
+      if(comment !== undefined) return '<span class="tok-com">' + escapeHtml(comment) + '</span>';
+      if(str !== undefined) return '<span class="tok-str">' + escapeHtml(str) + '</span>';
+      if(num !== undefined) return '<span class="tok-num">' + escapeHtml(num) + '</span>';
+      if(variable !== undefined) return '<span class="tok-fn">' + escapeHtml(variable) + '</span>';
+      if(word !== undefined){
+        if(BASH_KEYWORDS.indexOf(word) !== -1) return '<span class="tok-kw">' + escapeHtml(word) + '</span>';
+        return escapeHtml(word);
+      }
+      return escapeHtml(match);
+    });
+  }
+
+  function highlightOutput(code){ return escapeHtml(code); }
+
+  document.querySelectorAll('.code-card code').forEach(function(codeEl){
+    var raw = codeEl.textContent;
+    var cls = codeEl.className || '';
+    var html;
+    if(cls.indexOf('language-python') !== -1){ html = highlightPython(raw); }
+    else if(cls.indexOf('language-bash') !== -1){ html = highlightBash(raw); }
+    else { html = highlightOutput(raw); }
+    codeEl.innerHTML = html;
+  });
+
+  /* ===================== SEARCH FILTER ===================== */
+  var searchInput = document.getElementById('site-search');
+  var searchCount = document.getElementById('search-count');
+  var searchableBlocks = Array.prototype.slice.call(document.querySelectorAll('main .chapter .block, main .chapter > .lede'));
+  var allChapters = Array.prototype.slice.call(document.querySelectorAll('main .chapter'));
+  var searchTimer = null;
+
+  function clearSearch(){
+    searchableBlocks.forEach(function(b){ b.classList.remove('searchable-hide'); });
+    allChapters.forEach(function(c){ c.classList.remove('searchable-hide'); });
+    if(searchCount) searchCount.style.display = 'none';
+  }
+
+  function runSearch(query){
+    query = query.trim().toLowerCase();
+    if(!query){ clearSearch(); return; }
+    var totalMatches = 0;
+    allChapters.forEach(function(chapter){
+      var blocks = chapter.querySelectorAll('.block');
+      var chapterHasMatch = false;
+      if(blocks.length === 0){
+        var text = chapter.textContent.toLowerCase();
+        var match = text.indexOf(query) !== -1;
+        chapter.classList.toggle('searchable-hide', !match);
+        if(match){ chapterHasMatch = true; totalMatches++; }
+      } else {
+        blocks.forEach(function(block){
+          var text = block.textContent.toLowerCase();
+          var match = text.indexOf(query) !== -1;
+          block.classList.toggle('searchable-hide', !match);
+          if(match){ chapterHasMatch = true; totalMatches++; }
+        });
+      }
+      var chHead = chapter.querySelector('.chapter-head');
+      var headMatch = chHead && chHead.textContent.toLowerCase().indexOf(query) !== -1;
+      chapter.classList.toggle('searchable-hide', !(chapterHasMatch || headMatch));
+    });
+    if(searchCount){
+      searchCount.textContent = totalMatches + ' ফলাফল';
+      searchCount.style.display = 'inline-block';
+    }
+  }
+
+  if(searchInput){
+    searchInput.addEventListener('input', function(){
+      clearTimeout(searchTimer);
+      var val = searchInput.value;
+      searchTimer = setTimeout(function(){ runSearch(val); }, 180);
+    });
+  }
+
+})();
+</script>
+
+</body>
+</html>
